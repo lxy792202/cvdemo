@@ -1,0 +1,14 @@
+{
+    "selected_image": "ee3f12368f66a5352751c2fd4baa2458.jpg",
+    "original_size": [
+        860,
+        768
+    ],
+    "target_ratio": "4:3",
+    "operation": "outpainting",
+    "final_size": [
+        1024,
+        768
+    ],
+    "success": true
+}
