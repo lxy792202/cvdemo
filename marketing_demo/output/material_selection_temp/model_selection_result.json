@@ -1,82 +1,47 @@
 {
   "selections": [
     {
-      "target_id": "PC端_logo",
-      "selected_id": null,
-      "reason": "图片索引中均为产品图与工程案例图，不存在真正的企业Logo素材，按规则不允许用产品图代替Logo，返回null",
-      "confidence": 0.95
-    },
-    {
       "target_id": "PC端_company_intro",
-      "selected_id": "IMG_00035",
-      "reason": "画面为厂区院内成品假山与后方厂房建筑，兼具厂区与产品组合元素，符合公司介绍图突出企业形象与实力的要求",
-      "confidence": 0.85
-    },
-    {
-      "target_id": "PC端_product_main",
-      "selected_id": "IMG_00069",
-      "reason": "水泥塑石假山为主体，蓝天背景干净、主体突出、造型完整，最能代表主营假山产品，适合做产品主图",
+      "selected_id": "IMG_00017",
+      "reason": "索引中无厂区、车间等企业素材，按规则选用主营代表产品图兜底；IMG_00017为千层石假山瀑布水景，横构图契合16:9版面，画面完整美观，突出假山定制安装主业与企业形象。",
       "confidence": 0.9
     },
     {
       "target_id": "PC端_home_advantages",
-      "selected_id": "IMG_00053",
-      "reason": "大型假山施工现场，可见施工人员与脚手架，真实体现专业施工团队与工程规模，契合企业优势版块展示施工能力",
-      "confidence": 0.8
+      "selected_id": "IMG_00005",
+      "reason": "无企业施工素材情况下选用大气稳重的古建牌楼全景图，飞檐翘角、构图完整，体现古建工程整体承建实力，契合企业优势版面的品牌形象背景。",
+      "confidence": 0.88
     },
     {
       "target_id": "落地页_hero",
-      "selected_id": "IMG_00043",
-      "reason": "假山叠石配瀑布与喷泉水景，主体居中、构图完整、画面美观，突出假山定制安装主营业务，适合首屏头图",
-      "confidence": 0.9
+      "selected_id": "IMG_00023",
+      "reason": "大型水泥塑石假山瀑布墙主体突出、视觉冲击力强，画面美观，直接对应主营业务假山定制安装，适合作为首屏头图吸引浏览。",
+      "confidence": 0.92
     },
     {
-      "target_id": "落地页_product_service_假山",
-      "selected_id": "IMG_00044",
-      "reason": "大型水泥塑石假山带瀑布水景，产品主体清晰完整，属于假山分类产品图，与产品服务内容一致",
-      "confidence": 0.9
-    },
-    {
-      "target_id": "落地页_product_service_古建凉亭",
-      "selected_id": "IMG_00022",
-      "reason": "凉亭临水而建并带连廊石桥，中式园林韵味足、画面美观，属于古建凉亭分类产品图",
-      "confidence": 0.9
-    },
-    {
-      "target_id": "落地页_product_service_古建四合院",
-      "selected_id": "IMG_00014",
-      "reason": "青砖灰瓦、红柱游廊与庭院铺装完整呈现，四合院布局清晰，属于古建四合院分类产品图",
-      "confidence": 0.9
-    },
-    {
-      "target_id": "落地页_product_service_古建庙宇",
-      "selected_id": "IMG_00027",
-      "reason": "寺庙殿宇与石塔组合，蓝天绿树衬托，庄重典雅、构图美观，属于古建庙宇分类产品图",
-      "confidence": 0.9
-    },
-    {
-      "target_id": "落地页_product_service_古建戏楼",
-      "selected_id": "IMG_00019",
-      "reason": "戏楼台口结构完整、画面干净，主体清晰，属于古建戏楼分类产品图",
-      "confidence": 0.8
-    },
-    {
-      "target_id": "落地页_product_service_古建牌楼",
-      "selected_id": "IMG_00008",
-      "reason": "多间多楼牌楼造型大气、飞檐翘角层次分明，红柱白座主体突出，属于古建牌楼分类产品图",
-      "confidence": 0.9
+      "target_id": "落地页_product_service",
+      "selected_ids": [
+        "IMG_00018",
+        "IMG_00002",
+        "IMG_00011",
+        "IMG_00009",
+        "IMG_00014",
+        "IMG_00005"
+      ],
+      "reason": "按分类一一对应选图：假山选IMG_00018千层石假山瀑布（核心主营优先）；古建凉亭选IMG_00002水景园林凉亭；古建四合院选IMG_00011青砖灰瓦院落通道；古建庙宇选IMG_00009红墙大殿；古建戏楼选IMG_00014彩绘戏楼正立面；古建牌楼选IMG_00005三门牌楼，均为对应分类产品图且不重复。",
+      "confidence": 0.95
     },
     {
       "target_id": "落地页_core_advantages",
-      "selected_id": "IMG_00064",
-      "reason": "施工人员在假山顶部作业并带脚手架，真实展现专业施工团队与现场施工能力，契合企业核心优势配图",
-      "confidence": 0.8
+      "selected_id": "IMG_00024",
+      "reason": "大型塑石假山广场堆叠成品体现塑形工艺与工程规模，真实反映源头厂家与成熟工艺优势，无企业素材时作为实力配图最为贴切。",
+      "confidence": 0.87
     },
     {
       "target_id": "落地页_product_details",
-      "selected_id": "IMG_00054",
-      "reason": "塑石假山表面岩纹肌理与瀑布结构近景特写，能展示塑石工艺与结构细节，符合产品细节图要求",
-      "confidence": 0.85
+      "selected_id": "IMG_00026",
+      "reason": "该图为塑石假山近中景，山石纹理、叠石结构与瀑布水口工艺清晰可见，兼顾细节展示与美观，符合产品细节及优势版块需求。",
+      "confidence": 0.88
     }
   ]
 }

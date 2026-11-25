@@ -8,7 +8,7 @@ import shutil
 import requests
 
 from pathlib import Path
-from PIL import Image, ImageStat
+from PIL import Image, ImageDraw, ImageStat
 from openai import OpenAI
 import sys
 from pathlib import Path
@@ -79,12 +79,14 @@ def get_image_size(image_path):
         return img.size
 
 
-def is_4_3(image_path):
-    """精确判断图片是否为4:3"""
+def is_4_3(image_path, tolerance=0.02):
+    """判断图片是否为4:3（允许 2% 误差）"""
 
     width, height = get_image_size(image_path)
 
-    return width * 3 == height * 4
+    expected_width = height * 4 / 3
+
+    return abs(width - expected_width) <= max(width, height) * tolerance
 
 
 def collect_images(input_dir, output_dir):
@@ -421,11 +423,32 @@ def get_background_color(image):
     return average
 
 
+def _blurred_extend_background(original, target_size):
+    """用原图拉伸+模糊生成扩展区底色，给模型连续的背景参考。"""
+
+    from PIL import ImageFilter
+
+    width, height = target_size
+
+    background = original.resize(
+        (width, height),
+        Image.Resampling.LANCZOS
+    ).filter(
+        ImageFilter.GaussianBlur(
+            radius=max(12, min(width, height) // 50)
+        )
+    )
+
+    return background
+
+
 def create_outpainting_canvas(image_path):
     """
     创建4:3画布。
 
     原始图片保持原尺寸，不裁切、不拉伸。
+    扩展区域使用原图拉伸+模糊的底色，避免纯色画布导致
+    模型生成与原图背景不连续的色块。
     """
 
     original = Image.open(image_path).convert("RGB")
@@ -437,12 +460,9 @@ def create_outpainting_canvas(image_path):
         height
     )
 
-    background_color = get_background_color(original)
-
-    canvas = Image.new(
-        "RGB",
-        (target_width, target_height),
-        background_color
+    canvas = _blurred_extend_background(
+        original,
+        (target_width, target_height)
     )
 
     # 居中放置原图
@@ -465,6 +485,25 @@ def create_outpainting_canvas(image_path):
 # =========================================================
 # Seedream 扩图
 # =========================================================
+
+def _feather_mask(size, feather):
+    """生成边缘羽化蒙版，让原图与生成背景过渡自然。"""
+
+    width, height = size
+    mask = Image.new("L", size, 255)
+    draw = ImageDraw.Draw(mask)
+
+    feather = max(1, min(feather, width // 2, height // 2))
+
+    for index in range(feather):
+        alpha = int(255 * (index + 1) / feather)
+        draw.rectangle(
+            (index, index, width - 1 - index, height - 1 - index),
+            outline=alpha,
+        )
+
+    return mask
+
 
 def expand_image(image_path, output_path):
     """
@@ -497,10 +536,16 @@ def expand_image(image_path, output_path):
         f"目标画布：{target_width}x{target_height}"
     )
 
-    # 保存临时画布
-    temp_path = Path(output_path).with_name(
-        "_temp_outpainting_input.png"
+    # 保存临时画布（放在系统临时目录，避免污染最终输出目录）
+    import tempfile
+
+    temp_file = tempfile.NamedTemporaryFile(
+        suffix=".png",
+        prefix="outpainting_input_",
+        delete=False
     )
+    temp_path = Path(temp_file.name)
+    temp_file.close()
 
     canvas.save(temp_path, format="PNG")
 
@@ -533,6 +578,18 @@ def expand_image(image_path, output_path):
 4. 不得出现明显拼接痕迹。
 5. 不得生成无关物体或额外商品。
 6. 不要覆盖或重绘原始图片区域。
+
+【边界无缝要求（最高优先级）】
+
+1. 原始图片与扩展区域的交界处必须完全连续，
+   不得出现任何水平线、竖直线、分界线、色带、
+   暗边、亮边、边框或明暗突变。
+2. 天空、地面、墙体、建筑线条必须跨越原图边界
+   自然延续，不能断开或错位。
+3. 扩展区域的色温、亮度、饱和度必须与原始图片
+   边缘保持一致，不能出现上下或左右两块色差。
+4. 不要在原图边界处生成任何线条、阴影或装饰。
+5. 这是同一张照片的自然延伸，不是两张图片拼接。
 
 【最终效果】
 
@@ -615,13 +672,19 @@ def expand_image(image_path, output_path):
             )
 
         # 关键操作：
-        # 将原始图片像素重新覆盖到生成结果中。
-        # 这样商品及原图区域不会被生成模型重绘。
+        # 把原始图片像素覆盖回生成结果，保护商品不被重绘。
+        # 边界使用羽化蒙版过渡，避免出现水平接缝/色带。
         offset_x, offset_y = offset
+
+        feather = max(
+            24,
+            min(original.width, original.height) // 40
+        )
 
         generated.paste(
             original,
-            (offset_x, offset_y)
+            (offset_x, offset_y),
+            _feather_mask(original.size, feather)
         )
 
         output_path = Path(output_path)
@@ -661,19 +724,41 @@ def expand_image(image_path, output_path):
 # 主图选择与扩图 Skill
 # =========================================================
 
-def run(input_dir, output_dir):
+def run(input_dir=None, output_dir=None, image_paths=None):
     """
     Skill 主入口。
 
-    输入：
-        input_dir：前三个Skill处理完成的图片文件夹
+    输入（二选一）：
+        input_dir：前三个 Skill 处理完成的图片文件夹
+        image_paths：直接指定候选图片列表（跨目录按类别挑选时使用）
         output_dir：最终主图输出文件夹
 
     输出：
-        最佳4:3商品主图
+        最佳4:3商品主图 + 1:1裁切图
     """
 
-    input_dir = Path(input_dir).resolve()
+    if image_paths is None:
+
+        if input_dir is None:
+            raise ValueError("必须提供 input_dir 或 image_paths")
+
+        input_dir = Path(input_dir).resolve()
+
+        output_dir = Path(output_dir).resolve()
+
+        print("\n【第一步】收集处理后的图片")
+
+        image_paths = collect_images(
+            input_dir,
+            output_dir
+        )
+
+    else:
+
+        image_paths = [Path(p) for p in image_paths]
+
+    if output_dir is None:
+        raise ValueError("必须提供 output_dir")
 
     output_dir = Path(output_dir).resolve()
 
@@ -685,17 +770,6 @@ def run(input_dir, output_dir):
     print("=" * 50)
     print("商品主图优选与4:3智能扩图 Skill")
     print("=" * 50)
-
-    # -----------------------------------------------------
-    # 第一步：收集图片
-    # -----------------------------------------------------
-
-    print("\n【第一步】收集处理后的图片")
-
-    image_paths = collect_images(
-        input_dir,
-        output_dir
-    )
 
     if not image_paths:
 

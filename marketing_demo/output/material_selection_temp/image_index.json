@@ -1,673 +1,273 @@
 {
-  "total": 82,
+  "total": 32,
   "categories": {
-    "工程案例": 6,
-    "古建牌楼": 6,
-    "古建四合院": 4,
+    "古建凉亭": 3,
+    "古建牌楼": 4,
+    "古建庙宇": 3,
+    "古建四合院": 3,
     "古建戏楼": 3,
-    "古建凉亭": 7,
-    "古建庙宇": 7,
-    "假山": 49
+    "假山": 10,
+    "工程案例": 6
   },
   "source_types": {
-    "工程案例": 6,
-    "产品": 76
+    "产品": 26,
+    "工程案例": 6
   },
   "images": [
     {
       "id": "IMG_00001",
-      "filename": "邢台某镇古建牌楼制作安装工程.jpg",
-      "relative_path": "工程案例/邢台某镇古建牌楼制作安装工程.jpg",
-      "category": "工程案例",
-      "source_type": "工程案例",
-      "is_banner": false
+      "filename": "banner+古建凉亭__ce93f59e_final.png",
+      "relative_path": "产品中心/1古建凉亭/banner+古建凉亭__ce93f59e_final.png",
+      "category": "古建凉亭",
+      "source_type": "产品",
+      "is_banner": true
     },
     {
       "id": "IMG_00002",
-      "filename": "唐山人民公园千层石假山景观工程.JPG",
-      "relative_path": "工程案例/唐山人民公园千层石假山景观工程.JPG",
-      "category": "工程案例",
-      "source_type": "工程案例",
+      "filename": "古建凉亭 (1)__eb99e546_final.png",
+      "relative_path": "产品中心/1古建凉亭/古建凉亭 (1)__eb99e546_final.png",
+      "category": "古建凉亭",
+      "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00003",
-      "filename": "庭院天然石假山造景工程.jpg",
-      "relative_path": "工程案例/庭院天然石假山造景工程.jpg",
-      "category": "工程案例",
-      "source_type": "工程案例",
+      "filename": "古建凉亭 (2)__207a978c_final.png",
+      "relative_path": "产品中心/1古建凉亭/古建凉亭 (2)__207a978c_final.png",
+      "category": "古建凉亭",
+      "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00004",
-      "filename": "公园天然景观石造景工程.JPG",
-      "relative_path": "工程案例/公园天然景观石造景工程.JPG",
-      "category": "工程案例",
-      "source_type": "工程案例",
-      "is_banner": false
+      "filename": "banner+古建牌楼__4bb2b79b_final.png",
+      "relative_path": "产品中心/2古建牌楼/banner+古建牌楼__4bb2b79b_final.png",
+      "category": "古建牌楼",
+      "source_type": "产品",
+      "is_banner": true
     },
     {
       "id": "IMG_00005",
-      "filename": "园林假山叠石水景工程.jpg",
-      "relative_path": "工程案例/园林假山叠石水景工程.jpg",
-      "category": "工程案例",
-      "source_type": "工程案例",
+      "filename": "古建牌楼 (1)__b39064fe_final.png",
+      "relative_path": "产品中心/2古建牌楼/古建牌楼 (1)__b39064fe_final.png",
+      "category": "古建牌楼",
+      "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00006",
-      "filename": "广场水泥塑石假山景观工程.jpg",
-      "relative_path": "工程案例/广场水泥塑石假山景观工程.jpg",
-      "category": "工程案例",
-      "source_type": "工程案例",
+      "filename": "古建牌楼 (2)__6dc613aa_final.png",
+      "relative_path": "产品中心/2古建牌楼/古建牌楼 (2)__6dc613aa_final.png",
+      "category": "古建牌楼",
+      "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00007",
-      "filename": "古建牌楼 (1).jpg",
-      "relative_path": "产品中心/2古建牌楼/古建牌楼 (1).jpg",
+      "filename": "古建牌楼 (4)__af98d6bd_final.png",
+      "relative_path": "产品中心/2古建牌楼/古建牌楼 (4)__af98d6bd_final.png",
       "category": "古建牌楼",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00008",
-      "filename": "古建牌楼 (6).jpg",
-      "relative_path": "产品中心/2古建牌楼/古建牌楼 (6).jpg",
-      "category": "古建牌楼",
+      "filename": "古建庙宇 (1)__b4054764_final.png",
+      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (1)__b4054764_final.png",
+      "category": "古建庙宇",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00009",
-      "filename": "古建牌楼 (5).jpg",
-      "relative_path": "产品中心/2古建牌楼/古建牌楼 (5).jpg",
-      "category": "古建牌楼",
+      "filename": "古建庙宇 (1)__e7eca67a_final.png",
+      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (1)__e7eca67a_final.png",
+      "category": "古建庙宇",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00010",
-      "filename": "古建牌楼 (4).jpg",
-      "relative_path": "产品中心/2古建牌楼/古建牌楼 (4).jpg",
-      "category": "古建牌楼",
+      "filename": "古建庙宇 (2)__da5b8a2c_final.png",
+      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (2)__da5b8a2c_final.png",
+      "category": "古建庙宇",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00011",
-      "filename": "banner+古建牌楼.jpg",
-      "relative_path": "产品中心/2古建牌楼/banner+古建牌楼.jpg",
-      "category": "古建牌楼",
+      "filename": "古建四合院 (2)__891c3b21_final.png",
+      "relative_path": "产品中心/4 古建四合院/古建四合院 (2)__891c3b21_final.png",
+      "category": "古建四合院",
       "source_type": "产品",
-      "is_banner": true
+      "is_banner": false
     },
     {
       "id": "IMG_00012",
-      "filename": "古建牌楼 (2).jpg",
-      "relative_path": "产品中心/2古建牌楼/古建牌楼 (2).jpg",
-      "category": "古建牌楼",
+      "filename": "古建四合院 (3)__be20abd7_final.png",
+      "relative_path": "产品中心/4 古建四合院/古建四合院 (3)__be20abd7_final.png",
+      "category": "古建四合院",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00013",
-      "filename": "古建四合院 (3).jpg",
-      "relative_path": "产品中心/4 古建四合院/古建四合院 (3).jpg",
+      "filename": "古建四合院 (4)__8a025a06_final.png",
+      "relative_path": "产品中心/4 古建四合院/古建四合院 (4)__8a025a06_final.png",
       "category": "古建四合院",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00014",
-      "filename": "古建四合院 (2).jpg",
-      "relative_path": "产品中心/4 古建四合院/古建四合院 (2).jpg",
-      "category": "古建四合院",
+      "filename": "古建戏楼 (1)__afa31b02_final.png",
+      "relative_path": "产品中心/5 古建戏楼/古建戏楼 (1)__afa31b02_final.png",
+      "category": "古建戏楼",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00015",
-      "filename": "古建四合院 (5).jpg",
-      "relative_path": "产品中心/4 古建四合院/古建四合院 (5).jpg",
-      "category": "古建四合院",
+      "filename": "古建戏楼 (2)__b78c3414_final.png",
+      "relative_path": "产品中心/5 古建戏楼/古建戏楼 (2)__b78c3414_final.png",
+      "category": "古建戏楼",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00016",
-      "filename": "古建四合院 (4).jpg",
-      "relative_path": "产品中心/4 古建四合院/古建四合院 (4).jpg",
-      "category": "古建四合院",
+      "filename": "古建戏楼 (3)__58517fe2_final.png",
+      "relative_path": "产品中心/5 古建戏楼/古建戏楼 (3)__58517fe2_final.png",
+      "category": "古建戏楼",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00017",
-      "filename": "古建戏楼 (1).jpg",
-      "relative_path": "产品中心/5 古建戏楼/古建戏楼 (1).jpg",
-      "category": "古建戏楼",
+      "filename": "千层石假山 (1)__70395a23_final.png",
+      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (1)__70395a23_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00018",
-      "filename": "古建戏楼 (2).jpg",
-      "relative_path": "产品中心/5 古建戏楼/古建戏楼 (2).jpg",
-      "category": "古建戏楼",
+      "filename": "千层石假山 (2)__4d5fa895_final.png",
+      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (2)__4d5fa895_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00019",
-      "filename": "古建戏楼 (3).jpg",
-      "relative_path": "产品中心/5 古建戏楼/古建戏楼 (3).jpg",
-      "category": "古建戏楼",
+      "filename": "千层石假山 (4)__e49ccfbb_final.png",
+      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (4)__e49ccfbb_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00020",
-      "filename": "古建凉亭 (7).jpg",
-      "relative_path": "产品中心/1古建凉亭/古建凉亭 (7).jpg",
-      "category": "古建凉亭",
+      "filename": "天然石假山 (1)__7cec6dbe_final.png",
+      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (1)__7cec6dbe_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00021",
-      "filename": "古建凉亭 (6).jpg",
-      "relative_path": "产品中心/1古建凉亭/古建凉亭 (6).jpg",
-      "category": "古建凉亭",
+      "filename": "天然石假山 (5)__c30b49c9_final.png",
+      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (5)__c30b49c9_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00022",
-      "filename": "古建凉亭 (1).jpg",
-      "relative_path": "产品中心/1古建凉亭/古建凉亭 (1).jpg",
-      "category": "古建凉亭",
+      "filename": "天然石假山 (6)__481fba93_final.png",
+      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (6)__481fba93_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00023",
-      "filename": "古建凉亭 (2).jpg",
-      "relative_path": "产品中心/1古建凉亭/古建凉亭 (2).jpg",
-      "category": "古建凉亭",
+      "filename": "水泥塑石假山 (1)__9f1fbc2c_final.png",
+      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (1)__9f1fbc2c_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00024",
-      "filename": "banner+古建凉亭.jpg",
-      "relative_path": "产品中心/1古建凉亭/banner+古建凉亭.jpg",
-      "category": "古建凉亭",
+      "filename": "水泥塑石假山 (2)__171de722_final.png",
+      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (2)__171de722_final.png",
+      "category": "假山",
       "source_type": "产品",
-      "is_banner": true
+      "is_banner": false
     },
     {
       "id": "IMG_00025",
-      "filename": "古建凉亭 (5).jpg",
-      "relative_path": "产品中心/1古建凉亭/古建凉亭 (5).jpg",
-      "category": "古建凉亭",
+      "filename": "水泥塑石假山 (3)__044a8d7f_final.png",
+      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (3)__044a8d7f_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00026",
-      "filename": "古建凉亭 (4).jpg",
-      "relative_path": "产品中心/1古建凉亭/古建凉亭 (4).jpg",
-      "category": "古建凉亭",
+      "filename": "水泥塑石假山 (4)__917c419a_final.png",
+      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (4)__917c419a_final.png",
+      "category": "假山",
       "source_type": "产品",
       "is_banner": false
     },
     {
       "id": "IMG_00027",
-      "filename": "古建庙宇 (1).jpg",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (1).jpg",
-      "category": "古建庙宇",
-      "source_type": "产品",
+      "filename": "公园天然景观石造景工程__c4de6658_final.png",
+      "relative_path": "工程案例/公园天然景观石造景工程__c4de6658_final.png",
+      "category": "工程案例",
+      "source_type": "工程案例",
       "is_banner": false
     },
     {
       "id": "IMG_00028",
-      "filename": "古建庙宇 (7).jpg",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (7).jpg",
-      "category": "古建庙宇",
-      "source_type": "产品",
+      "filename": "唐山人民公园千层石假山景观工程__341e7152_final.png",
+      "relative_path": "工程案例/唐山人民公园千层石假山景观工程__341e7152_final.png",
+      "category": "工程案例",
+      "source_type": "工程案例",
       "is_banner": false
     },
     {
       "id": "IMG_00029",
-      "filename": "古建庙宇 (6).jpg",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (6).jpg",
-      "category": "古建庙宇",
-      "source_type": "产品",
+      "filename": "园林假山叠石水景工程__b54a327d_final.png",
+      "relative_path": "工程案例/园林假山叠石水景工程__b54a327d_final.png",
+      "category": "工程案例",
+      "source_type": "工程案例",
       "is_banner": false
     },
     {
       "id": "IMG_00030",
-      "filename": "古建庙宇 (4).jpg",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (4).jpg",
-      "category": "古建庙宇",
-      "source_type": "产品",
+      "filename": "广场水泥塑石假山景观工程__002c5e0f_final.png",
+      "relative_path": "工程案例/广场水泥塑石假山景观工程__002c5e0f_final.png",
+      "category": "工程案例",
+      "source_type": "工程案例",
       "is_banner": false
     },
     {
       "id": "IMG_00031",
-      "filename": "古建庙宇 (1).JPEG",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (1).JPEG",
-      "category": "古建庙宇",
-      "source_type": "产品",
+      "filename": "庭院天然石假山造景工程__600f8727_final.png",
+      "relative_path": "工程案例/庭院天然石假山造景工程__600f8727_final.png",
+      "category": "工程案例",
+      "source_type": "工程案例",
       "is_banner": false
     },
     {
       "id": "IMG_00032",
-      "filename": "古建庙宇 (3).jpg",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (3).jpg",
-      "category": "古建庙宇",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00033",
-      "filename": "古建庙宇 (2).jpg",
-      "relative_path": "产品中心/3 古建庙宇/古建庙宇 (2).jpg",
-      "category": "古建庙宇",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00034",
-      "filename": "千层石假山 (2).JPG",
-      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (2).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00035",
-      "filename": "千层石假山 (4).jpg",
-      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (4).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00036",
-      "filename": "千层石假山 (5).jpg",
-      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (5).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00037",
-      "filename": "千层石假山 (6).jpg",
-      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (6).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00038",
-      "filename": "千层石假山.JPG",
-      "relative_path": "产品中心/6 假山/千层石假山/千层石假山.JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00039",
-      "filename": "千层石假山 (1).jpg",
-      "relative_path": "产品中心/6 假山/千层石假山/千层石假山 (1).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00040",
-      "filename": "水泥塑石假山 (8).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (8).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00041",
-      "filename": "水泥塑石假山 (25).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (25).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00042",
-      "filename": "水泥塑石假山 (13).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (13).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00043",
-      "filename": "水泥塑石假山 (4).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (4).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00044",
-      "filename": "水泥塑石假山 (29).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (29).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00045",
-      "filename": "水泥塑石假山 (28).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (28).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00046",
-      "filename": "水泥塑石假山 (5).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (5).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00047",
-      "filename": "水泥塑石假山 (12).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (12).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00048",
-      "filename": "水泥塑石假山 (24).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (24).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00049",
-      "filename": "水泥塑石假山 (9).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (9).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00050",
-      "filename": "水泥塑石假山 (15).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (15).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00051",
-      "filename": "水泥塑石假山 (2).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (2).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00052",
-      "filename": "水泥塑石假山 (19).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (19).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00053",
-      "filename": "水泥塑石假山 (23).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (23).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00054",
-      "filename": "水泥塑石假山 (22).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (22).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00055",
-      "filename": "水泥塑石假山 (18).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (18).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00056",
-      "filename": "水泥塑石假山 (3).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (3).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00057",
-      "filename": "水泥塑石假山 (14).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (14).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00058",
-      "filename": "水泥塑石假山 (17).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (17).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00059",
-      "filename": "水泥塑石假山 (21).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (21).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00060",
-      "filename": "水泥塑石假山 (20).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (20).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00061",
-      "filename": "水泥塑石假山 (16).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (16).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00062",
-      "filename": "水泥塑石假山 (1).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (1).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00063",
-      "filename": "水泥塑石假山 (31).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (31).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00064",
-      "filename": "水泥塑石假山 (27).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (27).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00065",
-      "filename": "水泥塑石假山 (6).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (6).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00066",
-      "filename": "水泥塑石假山 (11).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (11).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00067",
-      "filename": "水泥塑石假山 (10).JPG",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (10).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00068",
-      "filename": "水泥塑石假山 (7).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (7).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00069",
-      "filename": "水泥塑石假山 (26).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (26).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00070",
-      "filename": "水泥塑石假山 (30).jpg",
-      "relative_path": "产品中心/6 假山/水泥塑石假山/水泥塑石假山 (30).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00071",
-      "filename": "天然石假山 (7).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (7).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00072",
-      "filename": "天然石假山 (6).jpg",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (6).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00073",
-      "filename": "天然石假山 (11).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (11).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00074",
-      "filename": "天然石假山 (16).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (16).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00075",
-      "filename": "天然石假山 (1).jpg",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (1).jpg",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00076",
-      "filename": "天然石假山 (17).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (17).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00077",
-      "filename": "天然石假山 (14).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (14).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00078",
-      "filename": "天然石假山 (18).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (18).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00079",
-      "filename": "天然石假山 (15).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (15).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00080",
-      "filename": "天然石假山 (5).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (5).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00081",
-      "filename": "天然石假山 (12).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (12).JPG",
-      "category": "假山",
-      "source_type": "产品",
-      "is_banner": false
-    },
-    {
-      "id": "IMG_00082",
-      "filename": "天然石假山 (13).JPG",
-      "relative_path": "产品中心/6 假山/天然石假山/天然石假山 (13).JPG",
-      "category": "假山",
-      "source_type": "产品",
+      "filename": "邢台某镇古建牌楼制作安装工程__7b9ea7d8_final.png",
+      "relative_path": "工程案例/邢台某镇古建牌楼制作安装工程__7b9ea7d8_final.png",
+      "category": "工程案例",
+      "source_type": "工程案例",
       "is_banner": false
     }
   ]

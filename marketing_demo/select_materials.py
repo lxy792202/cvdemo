@@ -1,88 +1,73 @@
+"""Stage 3：根据 design.json 从处理后的图片中智能选图。
 
-import os
-import re
-import json
+与旧版区别：
+- 输入/输出目录全部参数化，默认输入 output/01_processed；
+- 设计规范读取 marketing_demo/input/design.json（不再依赖 d.json）；
+- 支持“一页多产品”任务，一次为一个产品分类各选一张图（selected_ids）；
+- 输出 selection_manifest.json，作为 Stage 4 的唯一选图契约。
+"""
+
+import argparse
 import base64
+import json
+import re
 import shutil
-from pathlib import Path
+import sys
 from collections import defaultdict
+from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
-from openai import OpenAI
 
-from config import API_KEY, BASE_URL, VISION_MODEL, TEMPERATURE
+# 项目根目录 demo
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from config import TEMPERATURE  # noqa: E402
+from pipeline import common  # noqa: E402
 
 
 # ============================================================
-# 1. 基础配置
+# 1. 默认配置（可被命令行覆盖）
 # ============================================================
 
-BASE_DIR = Path(__file__).resolve().parent
-
-INPUT_DIR = BASE_DIR / "input"
-DESIGN_JSON = INPUT_DIR / "design.json"
-COMPANY_JSON = INPUT_DIR / "company.json"
-
-OUTPUT_DIR = BASE_DIR / "output" / "selected_materials"
-WORK_DIR = BASE_DIR / "output" / "material_selection_temp"
-
-SUPPORTED_EXTENSIONS = {
-    ".jpg", ".jpeg", ".png", ".webp", ".bmp"
-}
+DEFAULT_INPUT_DIR = common.PROCESSED_DIR
+DEFAULT_DESIGN_JSON = common.DESIGN_JSON
+DEFAULT_COMPANY_JSON = common.COMPANY_JSON
+DEFAULT_OUTPUT_DIR = common.SELECTED_MATERIALS_DIR
+DEFAULT_WORK_DIR = common.MATERIAL_TEMP_DIR
 
 PAGE_SIZE = 20
 SHEET_COLS = 4
 SHEET_ROWS = 5
-
 THUMB_WIDTH = 240
 THUMB_HEIGHT = 150
-
-TEMPERATURE = 0.1
-
-# PC端和落地页各自去重
-# 两个区域之间允许重复
 AVOID_DUPLICATES = True
 
-client = OpenAI(
-    api_key=API_KEY,
-    base_url=BASE_URL,
-    timeout=300,
-    max_retries=2   # 超时自动重试2次
-)
+client = common.client
 
 
 # ============================================================
 # 2. 通用工具
 # ============================================================
 
-def load_json(path):
-    if not path.exists():
-        return {}
-
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_json(path, default=None):
+    return common.load_json(path, default={} if default is None else default)
 
 
 def save_json(data, path):
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    return common.save_json(data, path)
 
 
 def safe_name(name):
-    name = re.sub(r'[\\/:*?"<>|]', "_", str(name))
-    return name.strip()
+    return common.safe_name(name)
 
 
 def normalize_category(name):
-    name = re.sub(r"^\s*\d+[\s._、-]*", "", str(name))
-    return name.strip() or "未分类"
+    return common.normalize_category(name)
 
 
 def encode_image(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
+    return common.encode_image(path)
 
 
 def is_banner_image(img):
@@ -90,53 +75,44 @@ def is_banner_image(img):
 
 
 def get_region_folder(region):
-    return OUTPUT_DIR / region
+    return REGION_OUTPUT_DIR / region
 
 
 def is_skip_design_item(item):
-    """
-    排除不需要选图的模块：
-    服务流程、电话咨询等
-    """
-
+    """排除不需要选图的模块：服务流程、电话咨询等。"""
     item_id = str(item.get("id", "")).lower()
     item_name = str(item.get("name", "")).lower()
-
     text = item_id + " " + item_name
 
     skip_keywords = [
-        "服务流程",
-        "流程图",
-        "service_process",
-        "service_flow",
-        "process",
-        "联系我们",
-        "联系咨询",
-        "电话咨询",
-        "电话",
-        "咨询电话",
-        "telephone",
-        "phone",
-        "call"
+        "服务流程", "流程图", "service_process", "service_flow", "process",
+        "联系我们", "联系咨询", "电话咨询", "电话", "咨询电话",
+        "telephone", "phone", "call", "logo",
     ]
 
     return any(keyword.lower() in text for keyword in skip_keywords)
 
 
+def is_banner_item(item):
+    text = (
+        str(item.get("id", "")).lower()
+        + " " + str(item.get("name", "")).lower()
+    )
+    return any(
+        keyword in text
+        for keyword in ["banner", "轮播", "carousel"]
+    )
+
+
 def is_product_main(item):
     item_id = str(item.get("id", "")).lower()
     item_name = str(item.get("name", ""))
-
-    return (
-        item_id == "product_main"
-        or "产品主图" in item_name
-    )
+    return item_id == "product_main" or "产品主图" in item_name
 
 
 def is_product_detail(item):
     item_id = str(item.get("id", "")).lower()
     item_name = str(item.get("name", ""))
-
     return (
         "product_detail" in item_id
         or "产品细节" in item_name
@@ -144,20 +120,9 @@ def is_product_detail(item):
     )
 
 
-def is_product_advantage(item):
-    item_id = str(item.get("id", "")).lower()
-    item_name = str(item.get("name", ""))
-
-    return (
-        "product_advantage" in item_id
-        or "产品优势" in item_name
-    )
-
-
 def is_product_service(item):
     item_id = str(item.get("id", "")).lower()
     item_name = str(item.get("name", ""))
-
     return (
         item_id == "product_service"
         or "产品及服务范围" in item_name
@@ -166,74 +131,54 @@ def is_product_service(item):
 
 
 # ============================================================
-# 3. 自动扫描 input 下所有图片
+# 3. 扫描图片
 # ============================================================
 
-def scan_images():
+def scan_images(input_dir=None, output_dir=None, work_dir=None):
+
+    input_dir = common.abs_path(input_dir or DEFAULT_INPUT_DIR)
+    output_dir = common.abs_path(output_dir or DEFAULT_OUTPUT_DIR)
+    work_dir = common.abs_path(work_dir or DEFAULT_WORK_DIR)
 
     print("\n========== 开始扫描图片 ==========")
+    print(f"输入目录：{input_dir}")
+
+    if not input_dir.exists():
+        raise FileNotFoundError(f"找不到输入目录：{input_dir}")
+
+    skip_dirs = {
+        output_dir.resolve(),
+        work_dir.resolve(),
+        common.WORK_ROOT.resolve(),
+        common.PROCESSED_DIR.resolve() / "_work",
+    }
 
     images = []
 
-    for path in INPUT_DIR.rglob("*"):
+    for path in sorted(input_dir.rglob("*")):
 
         if not path.is_file():
             continue
 
-        if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
+        if path.suffix.lower() not in common.SUPPORTED_EXTENSIONS:
             continue
 
-        if OUTPUT_DIR in path.parents:
+        if any(parent.resolve() in skip_dirs for parent in path.parents):
             continue
 
-        if WORK_DIR in path.parents:
+        try:
+            with Image.open(path) as img:
+                img.verify()
+        except Exception as exc:
+            print(f"跳过无效图片：{path.name}（{exc}）")
             continue
 
-        relative_path = path.relative_to(INPUT_DIR)
+        relative_path = path.relative_to(input_dir)
+        folder_parts = relative_path.parent.parts
 
-        parts = relative_path.parts
-        folder_parts = parts[:-1]
-
-        source_type = "其他"
-        category = "未分类"
-
-        product_root_index = None
-
-        # 自动识别产品中心
-        for index, folder in enumerate(folder_parts):
-
-            if "产品" in folder:
-                product_root_index = index
-                break
-
-        if product_root_index is not None:
-
-            source_type = "产品"
-
-            if product_root_index + 1 < len(folder_parts):
-
-                category = normalize_category(
-                    folder_parts[product_root_index + 1]
-                )
-
-        elif any("工程案例" in p for p in folder_parts):
-
-            source_type = "工程案例"
-
-            if folder_parts:
-                category = normalize_category(
-                    folder_parts[-1]
-                )
-
-        elif folder_parts:
-
-            source_type = "企业素材"
-
-            category = normalize_category(
-                folder_parts[-1]
-            )
-
-        is_banner = "banner" in path.name.lower()
+        source_type, category, is_banner = (
+            common.derive_source_type_category(folder_parts, path.name)
+        )
 
         image_id = f"IMG_{len(images) + 1:05d}"
 
@@ -245,24 +190,19 @@ def scan_images():
             "category": category,
             "source_type": source_type,
             "is_banner": is_banner,
-            "extension": path.suffix.lower()
+            "extension": path.suffix.lower(),
         })
 
     stats = defaultdict(int)
-
     for img in images:
         stats[(img["source_type"], img["category"])] += 1
 
     print(f"\n图片总数：{len(images)}")
-
     print("\n素材分类统计：")
-
     for (source_type, category), count in sorted(stats.items()):
         print(f"{source_type} / {category}: {count}张")
 
-    banner_count = sum(1 for img in images if img["is_banner"])
-
-    print(f"\nBanner图片：{banner_count}张")
+    print(f"\nBanner图片：{sum(1 for i in images if i['is_banner'])}张")
 
     return images
 
@@ -271,48 +211,44 @@ def scan_images():
 # 4. 建立图片索引
 # ============================================================
 
-def build_image_index(images):
+def build_image_index(images, work_dir=None):
 
     print("\n========== 建立图片索引 ==========")
+
+    work_dir = common.abs_path(work_dir or DEFAULT_WORK_DIR)
 
     index = {
         "total": len(images),
         "categories": {},
         "source_types": {},
-        "images": []
+        "images": [],
     }
 
     for img in images:
 
-        source_type = img["source_type"]
-        category = img["category"]
-
-        index["source_types"][source_type] = (
-            index["source_types"].get(source_type, 0) + 1
+        index["source_types"][img["source_type"]] = (
+            index["source_types"].get(img["source_type"], 0) + 1
         )
-
-        index["categories"][category] = (
-            index["categories"].get(category, 0) + 1
+        index["categories"][img["category"]] = (
+            index["categories"].get(img["category"], 0) + 1
         )
 
         index["images"].append({
             "id": img["id"],
             "filename": img["filename"],
             "relative_path": img["relative_path"],
-            "category": category,
-            "source_type": source_type,
-            "is_banner": img["is_banner"]
+            "category": img["category"],
+            "source_type": img["source_type"],
+            "is_banner": img["is_banner"],
         })
 
-    save_json(index, WORK_DIR / "image_index.json")
-
-    print(f"图片索引已保存：{WORK_DIR / 'image_index.json'}")
+    save_json(index, work_dir / "image_index.json")
+    print(f"图片索引已保存：{work_dir / 'image_index.json'}")
 
     return index
 
 
 def get_product_categories(images):
-
     return sorted({
         img["category"]
         for img in images
@@ -334,10 +270,9 @@ def build_targets(design, images):
 
     product_categories = get_product_categories(images)
 
-    # 每个区域独立建立任务
     design_sections = [
         ("PC端", design.get("pc_design", {}).get("materials", [])),
-        ("落地页", design.get("landing_page", {}).get("modules", []))
+        ("落地页", design.get("landing_page", {}).get("modules", [])),
     ]
 
     for region, items in design_sections:
@@ -349,130 +284,93 @@ def build_targets(design, images):
             if item.get("required") is not True:
                 continue
 
-            item_id = str(item.get("id", "")).lower()
-            item_name = str(item.get("name", "")).lower()
-
-            # 轮播图不参与AI选图
-            if (
-                "banner" in item_id
-                or "banner" in item_name
-                or "轮播" in item_id
-                or "轮播" in item_name
-                or "carousel" in item_id
-                or "carousel" in item_name
-            ):
-                print(f"跳过AI选图，后续直接复制轮播图：{item.get('name')}")
+            if is_banner_item(item):
+                print(f"跳过轮播图（Stage 4 重新生成）：{item.get('name')}")
                 continue
 
             if is_skip_design_item(item):
                 print(f"跳过不需要图片的模块：{item.get('name')}")
                 continue
 
-            if is_skip_design_item(item):
-                print(f"跳过不需要图片的模块：{item.get('name')}")
+            if is_product_main(item):
+                print(f"跳过产品主图（Stage 4 复用 Stage 2 成果）：{item.get('name')}")
                 continue
 
             item_id = str(item.get("id", "")).lower()
             item_name = item.get("name", item_id)
 
             # ------------------------------------------------
-            # 产品主图：每个设计项只选择一张
-            # 不再按产品分类生成多张任务
+            # 产品及服务范围：一页多产品，每个分类各一张
             # ------------------------------------------------
-            if is_product_main(item):
+            if is_product_service(item):
+
+                if not product_categories:
+                    print("没有产品分类，跳过多产品任务")
+                    continue
 
                 targets.append({
-                    "target_id": f"{region}_product_main",
-                    "name": "产品主图",
+                    "target_id": f"{region}_{item_id}",
+                    "module_id": item_id,
+                    "name": item_name,
                     "design_type": region,
                     "region": region,
+                    "mode": "multi",
                     "category": "不限",
+                    "categories": product_categories,
                     "source_type": "产品",
-                    "selection_rule": "所有产品中选择一张最具代表性的产品图",
-                    "requirements": item
+                    "selection_rule": (
+                        "需要为每个产品分类各选择一张代表性产品图，"
+                        "覆盖全部分类"
+                    ),
+                    "requirements": item,
                 })
 
                 continue
 
             # ------------------------------------------------
-            # 产品细节图：每个设计项一张
+            # 产品细节图：单张
             # ------------------------------------------------
             if is_product_detail(item):
 
                 targets.append({
                     "target_id": f"{region}_{item_id}",
+                    "module_id": item_id,
                     "name": item_name,
                     "design_type": region,
                     "region": region,
+                    "mode": "single",
                     "category": "不限",
                     "source_type": "产品",
-                    "selection_rule": "优先选择产品细节特写，没有合适细节时选择好看的产品图",
-                    "requirements": item
+                    "selection_rule": (
+                        "优先选择产品细节特写，没有合适细节时"
+                        "选择好看的产品图"
+                    ),
+                    "requirements": item,
                 })
 
                 continue
 
             # ------------------------------------------------
-            # 产品优势图：每个产品分类一张
-            # ------------------------------------------------
-            if is_product_advantage(item):
-
-                for category in product_categories:
-
-                    targets.append({
-                        "target_id": f"{region}_{item_id}_{category}",
-                        "name": f"{item_name}_{category}",
-                        "design_type": region,
-                        "region": region,
-                        "category": category,
-                        "source_type": "产品",
-                        "selection_rule": "每个产品分类选择一张代表性图片",
-                        "requirements": item
-                    })
-
-                continue
-
-            # ------------------------------------------------
-            # 产品服务范围：按分类选择
-            # ------------------------------------------------
-            if is_product_service(item):
-
-                for category in product_categories:
-
-                    targets.append({
-                        "target_id": f"{region}_{item_id}_{category}",
-                        "name": f"{item_name}_{category}",
-                        "design_type": region,
-                        "region": region,
-                        "category": category,
-                        "source_type": "产品",
-                        "selection_rule": "严格按照产品分类选择图片",
-                        "requirements": item
-                    })
-
-                continue
-
-            # ------------------------------------------------
-            # 普通设计项目：每个项目一张
+            # 普通设计项目：单张
             # ------------------------------------------------
             targets.append({
                 "target_id": f"{region}_{item_id}",
+                "module_id": item_id,
                 "name": item_name,
                 "design_type": region,
                 "region": region,
+                "mode": "single",
                 "category": "不限",
                 "source_type": "不限",
                 "selection_rule": "选择最适合设计用途的图片",
-                "requirements": item
+                "requirements": item,
             })
 
     print(f"\n需要筛选的设计项目：{len(targets)}个")
-
     for target in targets:
         print(
-            f"  {target['region']} / "
-            f"{target['name']} / "
-            f"{target['category']}"
+            f"  {target['region']} / {target['name']} / "
+            f"{target['mode']} / {target['category']}"
         )
 
     return targets
@@ -485,15 +383,14 @@ def build_targets(design, images):
 def get_font(size=16):
 
     font_paths = [
-        "/System/Library/Fonts/PingFang.ttc",
+        "/System/Library/Fonts/STHeiti Medium.ttc",
+        "/System/Library/Fonts/Hiragino Sans GB.ttc",
         "/System/Library/Fonts/STHeiti Light.ttc",
-        "/System/Library/Fonts/Supplemental/Arial.ttf"
+        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
     ]
 
     for font_path in font_paths:
-
         if Path(font_path).exists():
-
             try:
                 return ImageFont.truetype(font_path, size)
             except Exception:
@@ -502,77 +399,62 @@ def get_font(size=16):
     return ImageFont.load_default()
 
 
-def create_contact_sheets(images):
+def create_contact_sheets(images, work_dir=None):
 
     print("\n========== 生成图片索引图 ==========")
 
-    WORK_DIR.mkdir(parents=True, exist_ok=True)
+    work_dir = common.abs_path(work_dir or DEFAULT_WORK_DIR)
+    work_dir.mkdir(parents=True, exist_ok=True)
 
     sheet_paths = []
-
     cell_width = 260
     cell_height = 205
-
     font = get_font(15)
 
     for page_index in range(0, len(images), PAGE_SIZE):
 
-        page_images = images[
-            page_index:page_index + PAGE_SIZE
-        ]
+        page_images = images[page_index:page_index + PAGE_SIZE]
 
         sheet = Image.new(
             "RGB",
             (SHEET_COLS * cell_width, SHEET_ROWS * cell_height),
-            "#F5F5F5"
+            "#F5F5F5",
         )
-
         draw = ImageDraw.Draw(sheet)
 
         for index, item in enumerate(page_images):
 
             col = index % SHEET_COLS
             row = index // SHEET_COLS
-
             x = col * cell_width
             y = row * cell_height
 
             try:
-
                 image = Image.open(item["path"]).convert("RGB")
-
                 image.thumbnail((THUMB_WIDTH, THUMB_HEIGHT))
-
-                paste_x = x + (cell_width - image.width) // 2
-                paste_y = y + 5
-
-                sheet.paste(image, (paste_x, paste_y))
-
+                sheet.paste(
+                    image,
+                    (x + (cell_width - image.width) // 2, y + 5),
+                )
                 draw.text(
                     (x + 8, y + 160),
                     item["id"],
                     fill="#D00000",
-                    font=font
+                    font=font,
                 )
-
                 draw.text(
                     (x + 8, y + 181),
                     item["category"][:20],
                     fill="#222222",
-                    font=font
+                    font=font,
                 )
-
-            except Exception as e:
-
-                print(f"图片读取失败：{item['path']}，{e}")
+            except Exception as exc:
+                print(f"图片读取失败：{item['path']}，{exc}")
 
         sheet_path = (
-            WORK_DIR /
-            f"sheet_{page_index // PAGE_SIZE + 1:03d}.jpg"
+            work_dir / f"sheet_{page_index // PAGE_SIZE + 1:03d}.jpg"
         )
-
         sheet.save(sheet_path, quality=85)
-
         sheet_paths.append(sheet_path)
 
         print(f"已生成：{sheet_path.name}")
@@ -584,16 +466,9 @@ def create_contact_sheets(images):
 # 7. 企业资料
 # ============================================================
 
-def load_company_info():
-
-    company = load_json(COMPANY_JSON)
-
-    company_text = json.dumps(
-        company,
-        ensure_ascii=False,
-        indent=2
-    )
-
+def load_company_info(company_file=None):
+    company = load_json(company_file or DEFAULT_COMPANY_JSON)
+    company_text = json.dumps(company, ensure_ascii=False, indent=2)
     return company_text[:12000]
 
 
@@ -601,20 +476,11 @@ def load_company_info():
 # 8. 调用视觉模型筛选图片
 # ============================================================
 
-def select_materials(
-    images,
-    targets,
-    sheet_paths,
-    company_info
-):
+def select_materials(images, targets, sheet_paths, company_info):
 
     print("\n========== 开始智能素材筛选 ==========")
 
-    # Banner 不参与AI选图
-    candidate_images = [
-        img for img in images
-        if not img["is_banner"]
-    ]
+    candidate_images = [img for img in images if not img["is_banner"]]
 
     image_manifest = [
         {
@@ -622,7 +488,7 @@ def select_materials(
             "filename": img["filename"],
             "relative_path": img["relative_path"],
             "category": img["category"],
-            "source_type": img["source_type"]
+            "source_type": img["source_type"],
         }
         for img in candidate_images
     ]
@@ -631,12 +497,14 @@ def select_materials(
         {
             "target_id": target["target_id"],
             "name": target["name"],
+            "mode": target["mode"],
             "design_type": target["design_type"],
             "region": target["region"],
             "category": target["category"],
+            "categories": target.get("categories", []),
             "source_type": target["source_type"],
             "selection_rule": target["selection_rule"],
-            "requirements": target["requirements"]
+            "requirements": target["requirements"],
         }
         for target in targets
     ]
@@ -674,18 +542,17 @@ def select_materials(
 四、选图规则
 ========================
 
-1. 每个设计任务只选择一张图片。
+1. mode=single 的任务只选择一张图片，返回 selected_id。
 
-2. PC端内部不能重复使用图片。
+2. mode=multi 的任务（一页多产品）需要为 categories 中
+   每一个产品分类各选择一张图片，返回 selected_ids 数组，
+   数量应等于 categories 数量，且每个分类一张。
 
-3. 落地页内部不能重复使用图片。
+3. PC端内部不能重复使用图片。
 
-4. PC端和落地页之间允许使用同一张图片。
+4. 落地页内部不能重复使用图片。
 
-5. 产品主图：
-   每个区域只需要一张，不管有几个产品分类。
-   从全部产品图片中选一张最有代表性、
-   画面美观、主体清晰的产品图。
+5. PC端和落地页之间允许使用同一张图片。
 
 6. 公司介绍图：
    优先选择企业素材，例如生产、施工、团队、
@@ -699,41 +566,32 @@ def select_materials(
    如果没有合适的细节图，可以选择一张好看的
    产品图片代替。只需要一张。
 
-8. 产品优势图：
-   每个产品分类对应一个任务。
-   每个分类必须从对应分类的图片中选择一张。
-   不能跨分类选择。
+8. 产品及服务范围（mode=multi）：
+   必须严格按照每个产品分类选择对应分类的图片，
+   不能跨分类选择，不能重复。
 
-9. 产品及服务范围：
-   必须严格按照对应产品分类选择。
+9. 产品类任务必须来自产品图片，
+   不允许使用工程案例图片代替产品图片。
 
-10. 产品类任务必须来自产品图片，
-    不允许使用工程案例图片代替产品图片。
-
-11. Logo必须是真正的企业Logo，
-    没有合适Logo时返回null，不允许拿产品图代替Logo。
-
-12. 工程案例图片仅适用于工程案例或相关企业场景，
+10. 工程案例图片仅适用于工程案例或相关企业场景，
     不能当作产品实物图。
 
-13. 首屏或头图优先选择主体突出、构图好、
+11. 首屏或头图优先选择主体突出、构图好、
     画面美观的图片。
 
-14. 企业优势优先选择能体现生产、施工、
+12. 企业优势优先选择能体现生产、施工、
     团队、经营能力的企业素材。
     如果企业图片不足，可以考虑产品图片，
     但必须真实符合设计用途。
 
-15. 联系我们，联系咨询不需要选择图。
-
-16. 每个任务都应尽量选择不同图片，
+13. 每个任务都应尽量选择不同图片，
     但PC端与落地页之间允许重复。
 
-17. 只能返回图片索引中真实存在的ID。
+14. 只能返回图片索引中真实存在的ID。
 
-18. 不确定的图片可以返回null，
-    但公司介绍图、产品主图、产品细节图、
-    产品优势图尽量按规则使用图片兜底。
+15. 不确定的图片可以返回null，
+    但公司介绍图、产品细节图、产品及服务范围
+    尽量按规则使用图片兜底。
 
 ========================
 五、输出格式
@@ -746,53 +604,44 @@ def select_materials(
 {{
   "selections": [
     {{
-      "target_id": "PC端_product_main",
-      "selected_id": "IMG_00001",
+      "target_id": "落地页_product_service",
+      "selected_ids": ["IMG_00001", "IMG_00002"],
       "reason": "选择理由",
       "confidence": 0.95
+    }},
+    {{
+      "target_id": "落地页_hero",
+      "selected_id": "IMG_00003",
+      "reason": "选择理由",
+      "confidence": 0.9
     }}
   ]
 }}
 
 所有target_id必须返回结果。
-selected_id可以为null。
+selected_id / selected_ids 可以为null。
 """
 
-    content = [
-        {
-            "type": "text",
-            "text": prompt
-        }
-    ]
+    content = [{"type": "text", "text": prompt}]
 
-    # 添加索引图
     for sheet_path in sheet_paths:
-
-        image_data = encode_image(sheet_path)
-
         content.append({
             "type": "image_url",
             "image_url": {
-                "url": "data:image/jpeg;base64," + image_data,
-                "detail": "high"
-            }
+                "url": common.encode_image_thumb(sheet_path),
+                "detail": "high",
+            },
         })
 
     print(f"候选图片：{len(candidate_images)}张")
     print(f"设计任务：{len(targets)}个")
     print(f"索引图：{len(sheet_paths)}张")
-
     print("正在请求视觉理解模型...")
 
     response = client.chat.completions.create(
-        model=VISION_MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": content
-            }
-        ],
-        temperature=TEMPERATURE
+        model=common.VISION_MODEL,
+        messages=[{"role": "user", "content": content}],
+        temperature=TEMPERATURE,
     )
 
     result_text = response.choices[0].message.content
@@ -800,471 +649,465 @@ selected_id可以为null。
     if not result_text:
         raise ValueError("模型没有返回内容")
 
-    result_text = re.sub(
-        r"^```(?:json)?\s*|\s*```$",
-        "",
-        result_text.strip(),
-        flags=re.IGNORECASE
-    )
-
     try:
-        result = json.loads(result_text)
-
+        return common.extract_json(result_text)
     except json.JSONDecodeError:
-
         print("模型原始返回：")
         print(result_text)
-
         raise ValueError("模型返回的内容不是合法JSON")
-
-    return result
 
 
 # ============================================================
 # 9. 校验选图结果
 # ============================================================
 
-def validate_selections(
-    selection_result,
-    images,
-    targets
+def _validate_one(
+    selected_id,
+    target,
+    image_map,
+    used_images,
+    allowed_categories=None
 ):
+    """校验单张选中图片，通过后返回图片信息。"""
+
+    image_info = image_map.get(selected_id)
+
+    if not image_info:
+        print(f"无效图片ID：{selected_id}")
+        return None
+
+    if image_info["is_banner"]:
+        print(f"Banner素材禁止参与选图：{selected_id}")
+        return None
+
+    if allowed_categories:
+        if image_info["category"] not in allowed_categories:
+            print(
+                f"产品分类不匹配：{target['name']} "
+                f"要求={allowed_categories} "
+                f"实际={image_info['category']}"
+            )
+            return None
+    elif target["category"] != "不限":
+        if image_info["category"] != target["category"]:
+            print(
+                f"产品分类不匹配：{target['name']} "
+                f"要求={target['category']} "
+                f"实际={image_info['category']}"
+            )
+            return None
+
+    if target["source_type"] == "产品":
+        if image_info["source_type"] != "产品":
+            print(f"素材来源不匹配：{target['name']}")
+            return None
+
+    if AVOID_DUPLICATES and selected_id in used_images:
+        print(
+            f"{target['region']}内部图片重复，跳过：{selected_id}"
+        )
+        return None
+
+    used_images.add(selected_id)
+    return image_info
+
+
+def validate_selections(selection_result, images, targets):
 
     print("\n========== 校验筛选结果 ==========")
 
-    image_map = {
-        img["id"]: img
-        for img in images
+    image_map = {img["id"]: img for img in images}
+    target_list_map = {target["target_id"]: target for target in targets}
+
+    selection_map = {
+        item.get("target_id"): item
+        for item in selection_result.get("selections", [])
     }
 
-    target_map = {
-        target["target_id"]: target
-        for target in targets
-    }
-
-    selection_map = {}
-
-    for item in selection_result.get("selections", []):
-
-        selection_map[item.get("target_id")] = item
-
+    used_images_by_region = {"PC端": set(), "落地页": set()}
     valid_results = []
-
-    # PC端和落地页分别维护已使用图片
-    used_images_by_region = {
-        "PC端": set(),
-        "落地页": set()
-    }
 
     for target in targets:
 
         target_id = target["target_id"]
-
         selection = selection_map.get(target_id)
 
         if not selection:
-
             print(f"缺少任务结果：{target['name']}")
+            continue
+
+        region = target["region"]
+        used_images = used_images_by_region.setdefault(region, set())
+
+        if target["mode"] == "multi":
+
+            selected_ids = selection.get("selected_ids") or []
+            allowed = set(target.get("categories", []))
+            images_selected = []
+            covered = set()
+
+            for selected_id in selected_ids:
+
+                info = _validate_one(
+                    selected_id, target, image_map,
+                    used_images, allowed_categories=allowed
+                )
+
+                if not info:
+                    continue
+
+                if info["category"] in covered:
+                    print(f"分类重复选择，跳过：{info['category']}")
+                    continue
+
+                covered.add(info["category"])
+                images_selected.append({
+                    "selected_id": selected_id,
+                    "category": info["category"],
+                    "source_type": info["source_type"],
+                    "source_rel": info["relative_path"],
+                })
+
+            missing = sorted(allowed - covered)
+            if missing:
+                print(f"多产品任务缺少分类素材：{', '.join(missing)}")
+
+            if not images_selected:
+                print(f"多产品任务没有有效选择：{target['name']}")
+                continue
+
+            valid_results.append({
+                "target_id": target_id,
+                "module_id": target["module_id"],
+                "name": target["name"],
+                "region": region,
+                "mode": "multi",
+                "category": target["category"],
+                "categories": target.get("categories", []),
+                "images": images_selected,
+                "reason": selection.get("reason", ""),
+                "confidence": selection.get("confidence", 0),
+            })
+
+            print(
+                f"通过：{region} / {target['name']} -> "
+                f"{[i['category'] for i in images_selected]}"
+            )
             continue
 
         selected_id = selection.get("selected_id")
 
         if not selected_id:
-
             print(f"未找到合适素材：{target['name']}")
             continue
 
-        image_info = image_map.get(selected_id)
+        info = _validate_one(
+            selected_id, target, image_map, used_images
+        )
 
-        if not image_info:
-
-            print(f"无效图片ID：{selected_id}")
+        if not info:
             continue
-
-        if image_info["is_banner"]:
-
-            print(f"Banner素材禁止参与选图：{selected_id}")
-            continue
-
-        # ----------------------------------------------------
-        # 分类校验
-        # ----------------------------------------------------
-
-        if target["category"] != "不限":
-
-            if image_info["category"] != target["category"]:
-
-                print(
-                    f"产品分类不匹配：{target['name']} "
-                    f"要求={target['category']} "
-                    f"实际={image_info['category']}"
-                )
-
-                continue
-
-        # ----------------------------------------------------
-        # 来源校验
-        # ----------------------------------------------------
-
-        if target["source_type"] == "产品":
-
-            if image_info["source_type"] != "产品":
-
-                print(
-                    f"素材来源不匹配：{target['name']}"
-                )
-
-                continue
-
-        # ----------------------------------------------------
-        # 区域内部去重
-        # PC端与落地页不互相限制
-        # ----------------------------------------------------
-
-        region = target["region"]
-
-        used_images = used_images_by_region[region]
-
-        if AVOID_DUPLICATES and selected_id in used_images:
-
-            print(
-                f"{region}内部图片重复，跳过：{selected_id}"
-            )
-
-            continue
-
-        used_images.add(selected_id)
 
         valid_results.append({
             "target_id": target_id,
-            "selected_id": selected_id,
+            "module_id": target["module_id"],
+            "name": target["name"],
+            "region": region,
+            "mode": "single",
+            "category": target["category"],
+            "categories": [],
+            "images": [{
+                "selected_id": selected_id,
+                "category": info["category"],
+                "source_type": info["source_type"],
+                "source_rel": info["relative_path"],
+            }],
             "reason": selection.get("reason", ""),
-            "confidence": selection.get("confidence", 0)
+            "confidence": selection.get("confidence", 0),
         })
 
         print(
-            f"通过：{region} / {target['name']} "
-            f"-> {selected_id}"
+            f"通过：{region} / {target['name']} -> {selected_id}"
         )
 
     return valid_results
 
 
 # ============================================================
-# 10. 复制Banner图片
+# 10. 归档选中图片
 # ============================================================
 
-def copy_banner_images(image_index):
-    """
-    轮播图只复制到PC端，不复制到落地页
-    """
-    banner_images = []
+def _copy_one(image_info, target_dir, category=None):
 
-    for image in image_index:
-        image_path = Path(image["path"])
+    source_path = image_info["path"]
 
-        if "banner" in image_path.name.lower():
-            banner_images.append(image_path)
+    filename = source_path.name
+    if category:
+        filename = f"{safe_name(category)}_{filename}"
 
-    if not banner_images:
-        print("没有找到轮播图")
-        return
+    destination_path = target_dir / filename
 
-    # 仅复制到 PC 端目录
-    pc_banner_dir = OUTPUT_DIR / "PC端" / "轮播图"
-    pc_banner_dir.mkdir(parents=True, exist_ok=True)
+    if destination_path.exists():
+        destination_path = (
+            target_dir / f"{image_info['id']}{source_path.suffix}"
+        )
 
-    print(f"\n找到 {len(banner_images)} 张轮播图，仅复制到PC端")
+    shutil.copy2(source_path, destination_path)
+    return destination_path
 
-    for index, image_path in enumerate(banner_images, 1):
-        destination = pc_banner_dir / image_path.name
 
-        shutil.copy2(image_path, destination)
-
-        print(f"已复制轮播图：{image_path.name}")
-
-# ============================================================
-# 11. 归档选中图片
-# ============================================================
-
-def save_selected_materials(
-    selections,
-    images,
-    targets
-):
+def save_selected_materials(selections, images, targets, output_dir=None):
 
     print("\n========== 开始归档素材 ==========")
 
-    image_map = {
-        img["id"]: img
-        for img in images
-    }
+    output_dir = common.abs_path(output_dir or DEFAULT_OUTPUT_DIR)
+    image_map = {img["id"]: img for img in images}
+    target_map = {target["target_id"]: target for target in targets}
 
-    target_map = {
-        target["target_id"]: target
-        for target in targets
-    }
-
-    OUTPUT_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     report = []
+    manifest_items = []
 
     for selection in selections:
 
-        target_id = selection["target_id"]
-
-        selected_id = selection["selected_id"]
-
-        target = target_map[target_id]
-
-        image_info = image_map[selected_id]
-
-        source_path = image_info["path"]
-
+        target = target_map[selection["target_id"]]
         region = target["region"]
 
-        # 目录结构：selected_materials/PC端/设计项名称/
-        target_dir = (
-            get_region_folder(region) /
-            safe_name(target["name"])
-        )
+        target_dir = get_region_folder(region) / safe_name(target["name"])
+        target_dir.mkdir(parents=True, exist_ok=True)
 
-        target_dir.mkdir(
-            parents=True,
-            exist_ok=True
-        )
+        copied_images = []
 
-        destination_path = target_dir / source_path.name
+        for item in selection["images"]:
 
-        if destination_path.exists():
+            image_info = image_map[item["selected_id"]]
 
-            destination_path = (
-                target_dir /
-                f"{selected_id}{source_path.suffix}"
+            destination_path = _copy_one(
+                image_info,
+                target_dir,
+                category=item["category"] if selection["mode"] == "multi" else None,
             )
 
-        # 只复制原图
-        shutil.copy2(
-            source_path,
-            destination_path
-        )
+            copied_images.append({
+                "selected_id": item["selected_id"],
+                "category": item["category"],
+                "source_rel": item["source_rel"],
+                "out_rel": common.rel_path(destination_path),
+            })
 
-        result = {
-            "target_id": target_id,
+            print(
+                f"归档：{region} / {target['name']} -> "
+                f"{destination_path.name}"
+            )
+
+        report.append({
+            "target_id": selection["target_id"],
+            "module_id": selection["module_id"],
             "design_name": target["name"],
             "design_type": target["design_type"],
             "region": region,
-            "category": target["category"],
-            "selected_id": selected_id,
-            "source_image": image_info["relative_path"],
-            "selected_image": str(
-                destination_path.relative_to(BASE_DIR)
-            ),
+            "mode": selection["mode"],
+            "category": selection["category"],
+            "selected_images": copied_images,
             "reason": selection["reason"],
-            "confidence": selection["confidence"]
-        }
+            "confidence": selection["confidence"],
+        })
 
-        report.append(result)
+        manifest_items.append({
+            "target_id": selection["target_id"],
+            "module_id": selection["module_id"],
+            "region": region,
+            "mode": selection["mode"],
+            "name": target["name"],
+            "category": selection["category"],
+            "categories": selection.get("categories", []),
+            "images": copied_images,
+            "reason": selection["reason"],
+            "confidence": selection["confidence"],
+        })
 
-        print(f"归档成功：{region} / {target['name']}")
-        print(f"  原图：{image_info['relative_path']}")
-        print(f"  目标：{destination_path}")
+    save_json(report, output_dir / "selection_report.json")
 
-    # --------------------------------------------------------
-    # 复制Banner
-    # --------------------------------------------------------
-
-    banner_report = copy_banner_images(images)
-
-    # --------------------------------------------------------
-    # 保存报告
-    # --------------------------------------------------------
-
-    save_json(
-        report,
-        OUTPUT_DIR / "selection_report.json"
-    )
-
-    save_json(
-        banner_report,
-        OUTPUT_DIR / "banner_copy_report.json"
-    )
-
-    selected_targets = {
-        item["target_id"]
-        for item in selections
-    }
+    selected_targets = {item["target_id"] for item in selections}
 
     missing_targets = [
         {
             "target_id": target["target_id"],
+            "module_id": target["module_id"],
             "design_name": target["name"],
             "region": target["region"],
             "category": target["category"],
-            "reason": "没有找到合适素材或校验未通过"
+            "reason": "没有找到合适素材或校验未通过",
         }
         for target in targets
         if target["target_id"] not in selected_targets
     ]
 
-    save_json(
-        missing_targets,
-        OUTPUT_DIR / "missing_materials.json"
-    )
+    save_json(missing_targets, output_dir / "missing_materials.json")
+
+    from datetime import datetime
+
+    manifest = {
+        "schema_version": 1,
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "input_dir": common.rel_path(DEFAULT_INPUT_DIR),
+        "input_hash": common.input_hash(
+            common.rel_path(img["path"]) for img in images
+        ),
+        "selections": manifest_items,
+    }
+
+    save_json(manifest, output_dir / "selection_manifest.json")
+    common.save_manifest("selected", manifest)
 
     print("\n素材归档完成")
-
-    print(f"成功归档：{len(report)}个")
-    print(f"Banner复制：{len(banner_report)}张")
+    print(f"成功归档：{len(report)}个任务")
     print(f"未找到素材：{len(missing_targets)}个")
-    print(f"输出目录：{OUTPUT_DIR}")
+    print(f"输出目录：{output_dir}")
 
     return report
 
 
 # ============================================================
-# 12. 主程序
+# 11. 主流程
 # ============================================================
 
-def main():
+def main(
+    input_dir=None,
+    design_file=None,
+    company_file=None,
+    output_dir=None,
+    work_dir=None,
+    force=False,
+):
+
+    global REGION_OUTPUT_DIR
+
+    input_dir = common.abs_path(input_dir or DEFAULT_INPUT_DIR)
+    design_file = common.abs_path(design_file or DEFAULT_DESIGN_JSON)
+    company_file = common.abs_path(company_file or DEFAULT_COMPANY_JSON)
+    output_dir = common.abs_path(output_dir or DEFAULT_OUTPUT_DIR)
+    work_dir = common.abs_path(work_dir or DEFAULT_WORK_DIR)
+
+    REGION_OUTPUT_DIR = output_dir
 
     print("=" * 55)
-    print("企业营销设计素材智能筛选系统")
+    print("企业营销设计素材智能筛选系统（Stage 3）")
     print("=" * 55)
 
-    # --------------------------------------------------------
-    # 配置检查
-    # --------------------------------------------------------
+    if not input_dir.exists():
+        raise FileNotFoundError(f"找不到输入目录：{input_dir}")
 
-    if not API_KEY:
-        raise ValueError("config.py 中没有配置 API_KEY")
+    if not design_file.exists():
+        raise FileNotFoundError(f"找不到设计规范：{design_file}")
 
-    if not BASE_URL:
-        raise ValueError("config.py 中没有配置 BASE_URL")
+    design = load_json(design_file)
+    company_info = load_company_info(company_file)
 
-    if not VISION_MODEL:
-        raise ValueError("config.py 中没有配置 VISION_MODEL")
-
-    if not INPUT_DIR.exists():
-        raise FileNotFoundError(
-            f"找不到输入目录：{INPUT_DIR}"
-        )
-
-    if not DESIGN_JSON.exists():
-        raise FileNotFoundError(
-            f"找不到设计规范：{DESIGN_JSON}"
-        )
-
-    # --------------------------------------------------------
-    # 1. 读取资料
-    # --------------------------------------------------------
-
-    print("\n[1/7] 读取设计规范...")
-
-    design = load_json(DESIGN_JSON)
-
-    company_info = load_company_info()
-
-    # --------------------------------------------------------
-    # 2. 扫描图片
-    # --------------------------------------------------------
-
-    print("\n[2/7] 扫描图片...")
-
-    images = scan_images()
+    images = scan_images(input_dir, output_dir, work_dir)
 
     if not images:
         print("没有找到任何图片")
-        return
+        return []
 
-    # --------------------------------------------------------
-    # 3. 建立索引
-    # --------------------------------------------------------
-
-    print("\n[3/7] 建立图片索引...")
-
-    build_image_index(images)
-
-    # --------------------------------------------------------
-    # 4. 生成筛选任务
-    # --------------------------------------------------------
-
-    print("\n[4/7] 生成设计任务...")
-
-    targets = build_targets(
-        design,
-        images
+    current_hash = common.input_hash(
+        common.rel_path(img["path"]) for img in images
     )
+
+    existing_manifest = load_json(
+        output_dir / "selection_manifest.json", default={}
+    )
+
+    existing_files_ok = all(
+        (common.PROJECT_ROOT / img["out_rel"]).exists()
+        for selection in existing_manifest.get("selections", [])
+        for img in selection.get("images", [])
+    ) and bool(existing_manifest.get("selections"))
+
+    if (
+        not force
+        and output_dir.exists()
+        and existing_manifest.get("input_hash") == current_hash
+        and existing_files_ok
+        and (output_dir / "selection_report.json").exists()
+    ):
+        print("输入图片未变化，复用已有选图结果。")
+        return load_json(
+            output_dir / "selection_report.json", default=[]
+        )
+
+    if output_dir.exists() and (
+        force or existing_manifest.get("input_hash") != current_hash
+    ):
+        common.archive_existing(output_dir, "selected_materials")
+
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    build_image_index(images, work_dir)
+
+    targets = build_targets(design, images)
 
     if not targets:
         print("没有需要筛选的设计项目")
-        return
+        return []
 
-    # --------------------------------------------------------
-    # 5. 生成图片索引图
-    # --------------------------------------------------------
-
-    print("\n[5/7] 生成图片索引图...")
-
-    candidate_images = [
-        img for img in images
-        if not img["is_banner"]
-    ]
+    candidate_images = [img for img in images if not img["is_banner"]]
 
     if not candidate_images:
         print("没有可用于AI筛选的候选图片")
-        return
+        return []
 
-    sheet_paths = create_contact_sheets(
-        candidate_images
-    )
-
-    # --------------------------------------------------------
-    # 6. 调用模型
-    # --------------------------------------------------------
-
-    print("\n[6/7] 调用视觉理解模型...")
+    sheet_paths = create_contact_sheets(candidate_images, work_dir)
 
     selection_result = select_materials(
-        images,
-        targets,
-        sheet_paths,
-        company_info
+        images, targets, sheet_paths, company_info
     )
 
     save_json(
         selection_result,
-        WORK_DIR / "model_selection_result.json"
+        work_dir / "model_selection_result.json",
     )
 
-    # --------------------------------------------------------
-    # 7. 校验与归档
-    # --------------------------------------------------------
-
-    print("\n[7/7] 校验并归档...")
-
     valid_selections = validate_selections(
-        selection_result,
-        images,
-        targets
+        selection_result, images, targets
     )
 
     report = save_selected_materials(
-        valid_selections,
-        images,
-        targets
+        valid_selections, images, targets, output_dir
     )
 
     print("\n" + "=" * 55)
-    print("全部处理完成！")
+    print("Stage 3 完成！")
     print(f"设计任务总数：{len(targets)}")
     print(f"成功选中数量：{len(report)}")
-    print(f"最终素材目录：{OUTPUT_DIR}")
+    print(f"最终素材目录：{output_dir}")
     print("=" * 55)
+
+    return report
+
+
+REGION_OUTPUT_DIR = DEFAULT_OUTPUT_DIR
+
+
+def _parse_args():
+    parser = argparse.ArgumentParser(description="Stage 3：设计素材智能筛选")
+    parser.add_argument("--input-dir", default=str(DEFAULT_INPUT_DIR))
+    parser.add_argument("--design", default=str(DEFAULT_DESIGN_JSON))
+    parser.add_argument("--company", default=str(DEFAULT_COMPANY_JSON))
+    parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
+    parser.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR))
+    parser.add_argument("--force", action="store_true")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main()
+    args = _parse_args()
+    main(
+        input_dir=args.input_dir,
+        design_file=args.design,
+        company_file=args.company,
+        output_dir=args.output_dir,
+        work_dir=args.work_dir,
+        force=args.force,
+    )

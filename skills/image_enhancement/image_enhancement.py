@@ -2,8 +2,12 @@
 import base64
 import mimetypes
 import requests
-import shutil
+import sys
 from pathlib import Path
+
+# 获取项目根目录 demo
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 
 from config import BASE_URL, API_KEY, IMAGE_MODEL
 from test_image_analysis import analyze_image
@@ -128,7 +132,15 @@ def enhance_image(image_path, output_path):
     return str(output_path)
 
 
-def run(image_path, output_path):
+def _save_png(src, dest):
+    """把图片统一转存为 PNG，避免 JPEG 字节写进 .png。"""
+    from PIL import Image
+    with Image.open(src) as img:
+        Path(dest).parent.mkdir(parents=True, exist_ok=True)
+        img.convert("RGB").save(dest, format="PNG")
+
+
+def run(image_path, output_path, required_skills=None, analysis_result=None):
     """图片基础优化 Skill 主入口"""
 
     image_path = Path(image_path)
@@ -137,29 +149,25 @@ def run(image_path, output_path):
     if not image_path.exists():
         raise FileNotFoundError(f"图片不存在：{image_path}")
 
-    print(f"正在分析图片：{image_path.name}")
+    # 第一步：Qwen 图片分析（调用方已提供结果时跳过）
+    if required_skills is None:
+        if analysis_result is None:
+            print(f"正在分析图片：{image_path.name}")
+            analysis_result = analyze_image(str(image_path))
 
-    # 第一步：Qwen 图片分析
-    analysis_result = analyze_image(str(image_path))
+        print("图片分析结果：")
+        print(analysis_result)
 
-    print("图片分析结果：")
-    print(analysis_result)
-
-    required_skills = analysis_result.get(
-        "required_skills", []
-    )
+        required_skills = analysis_result.get(
+            "required_skills", []
+        )
 
     # 第二步：判断是否需要基础优化
     if "image_enhancement" not in required_skills:
 
-        output_path.parent.mkdir(
-            parents=True,
-            exist_ok=True
-        )
+        _save_png(image_path, output_path)
 
-        shutil.copy2(image_path, output_path)
-
-        print("图片无需基础优化，已复制原图")
+        print("图片无需基础优化，已转存原图")
 
         return {
             "success": True,

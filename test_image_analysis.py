@@ -1,15 +1,13 @@
 
-import os
 import json
 import base64
 import mimetypes
-from pathlib import Path
-from openai import OpenAI
 import sys
 from pathlib import Path
+from openai import OpenAI
 
-# 获取项目根目录 demo
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+# 获取项目根目录 demo（本文件位于 demo/ 下）
+PROJECT_ROOT = Path(__file__).resolve().parents[0]
 
 # 添加到 Python 模块搜索路径
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -232,23 +230,29 @@ background_replacement
 
     return result
 
-    if not set(result["required_skills"]).issubset(allowed_skills):
-        raise ValueError("模型返回了未定义的 Skill")
 
-    # 去重
-    result["required_skills"] = list(
-        dict.fromkeys(result["required_skills"])
-    )
+def process_image(
+    image_path,
+    final_dir,
+    process_dir,
+    required_skills=None,
+    final_filename=None,
+    analysis_result=None
+):
+    """
+    处理单张图片。
 
-    return result
-
-def process_image(image_path, final_dir, process_dir):
+    required_skills 由调用方传入时，跳过重复的视觉分析；
+    否则本函数自行分析一次。
+    """
 
     image_path = Path(image_path)
 
-    # 1. AI 分析
-    analysis_result = analyze_image(image_path)
-    required_skills = analysis_result["required_skills"]
+    # 1. AI 分析（只执行一次）
+    if required_skills is None:
+        if analysis_result is None:
+            analysis_result = analyze_image(image_path)
+        required_skills = analysis_result["required_skills"]
 
     print("\n需要执行的 Skill：", required_skills)
 
@@ -277,7 +281,9 @@ def process_image(image_path, final_dir, process_dir):
     current_image = image_path
 
     # 最终图片路径
-    final_path = final_dir / f"{image_path.stem}_final.png"
+    final_path = final_dir / (
+        final_filename or f"{image_path.stem}_final.png"
+    )
 
     # 实际需要执行的 Skill
     selected_skills = [
@@ -290,16 +296,12 @@ def process_image(image_path, final_dir, process_dir):
 
         print(f"\n开始执行：{skill_name}")
 
-        # 最后一个 Skill 输出到最终目录
-        # 同时也保留一份在过程目录
-        if index == len(selected_skills):
-            output_path = image_process_dir / f"{index:02d}_{skill_name}.png"
-        else:
-            output_path = image_process_dir / f"{index:02d}_{skill_name}.png"
+        output_path = image_process_dir / f"{index:02d}_{skill_name}.png"
 
         result = skill_registry[skill_name](
             image_path=str(current_image),
-            output_path=str(output_path)
+            output_path=str(output_path),
+            required_skills=required_skills
         )
 
         if not result["success"]:
@@ -307,24 +309,35 @@ def process_image(image_path, final_dir, process_dir):
 
         current_image = Path(result["image_path"])
 
-    # 6. 复制最终结果到独立最终目录
-    import shutil
+    # 6. 输出最终结果到独立目录
+    final_path.parent.mkdir(parents=True, exist_ok=True)
+
+    from PIL import Image
 
     if selected_skills:
-        shutil.copy2(current_image, final_path)
+        with Image.open(current_image) as img:
+            img.convert("RGB").save(final_path, format="PNG")
     else:
-        # 不需要处理时，直接复制原图
-        shutil.copy2(image_path, final_path)
+        # 不需要处理时，把原图统一转存为 PNG
+        with Image.open(image_path) as img:
+            img.convert("RGB").save(final_path, format="PNG")
 
     return {
         "success": True,
         "original_image": str(image_path),
         "final_image": str(final_path),
         "process_directory": str(image_process_dir),
-        "executed_skills": selected_skills
+        "executed_skills": selected_skills,
+        "required_skills": list(required_skills)
     }
 
-def process_folder(folder_path):
+def process_folder(
+    folder_path,
+    final_dir=None,
+    process_dir=None,
+    recursive=True,
+    limit=None
+):
 
     folder_path = Path(folder_path)
 
@@ -335,18 +348,23 @@ def process_folder(folder_path):
         ".jpg", ".jpeg", ".png", ".webp", ".bmp"
     }
 
+    iterator = folder_path.rglob("*") if recursive else folder_path.iterdir()
+
     image_files = sorted([
-        p for p in folder_path.iterdir()
+        p for p in iterator
         if p.is_file() and p.suffix.lower() in image_extensions
     ])
+
+    if limit:
+        image_files = image_files[:limit]
 
     if not image_files:
         print("没有找到图片")
         return []
 
-    # 两个独立输出目录
-    final_dir = Path("final_output")
-    process_dir = Path("process_output")
+    # 两个独立输出目录（可外部指定）
+    final_dir = Path(final_dir or (folder_path / "final_output"))
+    process_dir = Path(process_dir or (folder_path / "process_output"))
 
     final_dir.mkdir(parents=True, exist_ok=True)
     process_dir.mkdir(parents=True, exist_ok=True)
