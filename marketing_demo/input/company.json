@@ -1,0 +1,565 @@
+
+{
+  "company": {
+    "name": "河北硕景园林古建筑工程有限公司",
+    "short_name": "硕景园林",
+    "location": "河北保定",
+    "phone": "15130297856",
+    "industry": "园林古建工程",
+    "main_business": "假山定制安装",
+    "core_positioning": "量身定制施工方案",
+    "factory_advantages": [
+      "专业施工团队",
+      "全国上门施工",
+      "工期保障",
+      "设计+定制+施工，一站式落地"
+    ],
+    "company_profile": "河北硕景园林古建筑工程有限公司坐落于河北保定，是集方案设计、定制生产、现场施工、售后维保于一体的综合性古建园林施工企业。公司专注传统古建营造与现代园林塑景工程，拥有专业设计团队和经验丰富的施工队伍，业务辐射京津冀及全国各省市，凭借精细工艺、稳定质量与诚信服务，在古建园林行业积累了良好的口碑与众多落地实绩。",
+    "business_description": "公司主营古建筑牌楼、仿古凉亭、亭台楼阁、寺庙仿古建造与修缮、水泥雕塑、塑石假山假树、水泥仿木栏杆、景观音乐喷泉设计施工等全套园林古建工程。项目广泛适用于美丽乡村村口、旅游景区、森林公园、校园环境、厂区美化、市政公园、寺庙道观等场景，可根据现场地形、风格需求定制设计，兼顾传统古韵、结构稳固与户外耐久实用性。",
+    "business_philosophy": "匠心做工、保质守信",
+    "service_commitment": "从前期规划设计、中期施工建造到后期售后维护，提供一站式整体解决方案。",
+    "service_scope": [
+      "各地市政工程",
+      "文旅景区",
+      "美丽乡村",
+      "工矿企业"
+    ]
+  },
+  "brand_style": {
+    "primary_color": "#c50303",
+    "secondary_color": "#FFFFFF",
+    "recommended_colors": [
+      "#c50303",
+      "#FFFFFF",
+      "#D9C6A3",
+      "#333333"
+    ],
+    "visual_keywords": [
+      "中式古典",
+      "园林景观",
+      "传统古建",
+      "大气稳重",
+      "匠心工艺",
+      "自然景观"
+    ],
+    "design_direction": "以中国传统古建筑和园林景观为核心，采用红色作为品牌强调色，搭配白色、石材色及深灰色，体现专业古建施工企业形象。",
+    "image_requirements": [
+      "优先使用真实产品和工程图片",
+      "突出古建建筑的整体造型与施工细节",
+      "产品图片与实际产品类别保持一致",
+      "避免现代建筑风格与古建主题冲突",
+      "所有宣传素材保持统一品牌色调"
+    ]
+  },
+  "company_strength": {
+    "factory_area": "5000㎡厂房",
+    "industry_experience": "10余年行业经验",
+    "team": "专业设计团队和经验丰富的施工队伍",
+    "production_resources": [
+      "自有石材基地",
+      "塑形车间",
+      "专业施工团队"
+    ],
+    "business_model": [
+      "方案设计",
+      "定制生产",
+      "现场施工",
+      "售后维保"
+    ]
+  },
+  "products": [
+    {
+      "id": "ancient_pavilion",
+      "name": "古建凉亭",
+      "category": "古建园林",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "古典雅致",
+          "description": "融合传统建筑美学，造型优美，彰显中式园林韵味。"
+        },
+        {
+          "title": "工艺精湛",
+          "description": "采用传统榫卯工艺，结构合理，细节精致。"
+        },
+        {
+          "title": "坚固耐用",
+          "description": "精选优质建筑材料，结构稳固，适应多种户外环境。"
+        },
+        {
+          "title": "场景多样",
+          "description": "适用于公园、庭院、景区、广场及园林景观。"
+        },
+        {
+          "title": "支持定制",
+          "description": "可根据场地尺寸、建筑风格及客户需求进行个性化设计。"
+        }
+      ],
+      "image_keywords": [
+        "中式古建凉亭",
+        "仿古六角凉亭",
+        "园林景观凉亭",
+        "传统木结构凉亭"
+      ]
+    },
+    {
+      "id": "ancient_temple",
+      "name": "古建庙宇",
+      "category": "古建工程",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "传统风貌",
+          "description": "传承中式古建筑特色，体现庄重典雅的建筑气韵。"
+        },
+        {
+          "title": "结构严谨",
+          "description": "注重建筑比例与整体布局，兼顾美观性与结构稳定性。"
+        },
+        {
+          "title": "匠心工艺",
+          "description": "结合传统木作、斗拱、雕刻等工艺，展现古建文化魅力。"
+        },
+        {
+          "title": "品质选材",
+          "description": "精选适用建筑材料，注重防腐、防潮及耐久性能。"
+        },
+        {
+          "title": "整体承建",
+          "description": "可根据场地条件和建筑需求，提供设计、制作与施工服务。"
+        }
+      ],
+      "image_keywords": [
+        "中式古建寺庙",
+        "仿古寺庙建筑",
+        "传统寺庙大殿",
+        "古建筑斗拱"
+      ]
+    },
+    {
+      "id": "ancient_archway",
+      "name": "古建牌楼",
+      "category": "古建工程",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "造型大气",
+          "description": "飞檐翘角、层次分明，具有鲜明的中式建筑特色。"
+        },
+        {
+          "title": "文化寓意",
+          "description": "融合传统建筑文化与地域特色，彰显场所文化底蕴。"
+        },
+        {
+          "title": "精细雕饰",
+          "description": "可融入浮雕、彩绘、匾额等装饰元素，提升整体观赏性。"
+        },
+        {
+          "title": "结构稳固",
+          "description": "注重基础设计与主体结构施工，兼顾安全性和耐久性。"
+        },
+        {
+          "title": "灵活定制",
+          "description": "支持不同规格、材质、造型及装饰风格定制。"
+        }
+      ],
+      "image_keywords": [
+        "中式古建牌楼",
+        "村口仿古牌楼",
+        "景区入口牌楼",
+        "传统石雕牌楼"
+      ]
+    },
+    {
+      "id": "siheyuan",
+      "name": "古建四合院",
+      "category": "古建工程",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "经典布局",
+          "description": "传承传统四合院空间格局，体现中式建筑文化与居住美学。"
+        },
+        {
+          "title": "空间合理",
+          "description": "庭院与房屋相互融合，布局规整，空间层次丰富。"
+        },
+        {
+          "title": "建筑精美",
+          "description": "融合青砖灰瓦、木质门窗、雕花构件等传统元素。"
+        },
+        {
+          "title": "舒适宜居",
+          "description": "兼顾采光、通风、私密性与日常居住需求。"
+        },
+        {
+          "title": "整体定制",
+          "description": "可根据土地面积、使用功能及建筑风格，量身打造专属院落。"
+        }
+      ],
+      "image_keywords": [
+        "中式传统四合院",
+        "青砖灰瓦四合院",
+        "仿古庭院建筑",
+        "中式庭院景观"
+      ]
+    },
+    {
+      "id": "rockery",
+      "name": "塑石假山",
+      "category": "园林景观",
+      "main_product": true,
+      "advantages": [
+        {
+          "title": "造型定制",
+          "description": "根据现场地形和景观风格，量身设计假山造型。"
+        },
+        {
+          "title": "工艺精细",
+          "description": "结合塑形工艺，打造自然山石纹理与层次效果。"
+        },
+        {
+          "title": "结构加固",
+          "description": "采用钢结构骨架加固方式，兼顾造型与结构稳定性。"
+        },
+        {
+          "title": "场景广泛",
+          "description": "适用于公园、景区、庭院及各类园林景观工程。"
+        }
+      ],
+      "image_keywords": [
+        "大型塑石假山",
+        "园林景观假山",
+        "水泥塑石假山",
+        "庭院假山瀑布",
+        "景区假山工程"
+      ]
+    },
+    {
+      "id": "artificial_tree",
+      "name": "水泥假树",
+      "category": "园林景观",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "形态自然",
+          "description": "根据设计需求塑造树干纹理和枝干造型。"
+        },
+        {
+          "title": "造型多样",
+          "description": "支持不同高度、形态及景观风格定制。"
+        },
+        {
+          "title": "工艺塑形",
+          "description": "通过塑形工艺表现自然树木纹理。"
+        },
+        {
+          "title": "场景适配",
+          "description": "适用于公园、景区及主题园林景观。"
+        }
+      ],
+      "image_keywords": [
+        "水泥仿真树",
+        "景观塑石假树",
+        "园林假树造景",
+        "大型仿真树工程"
+      ]
+    },
+    {
+      "id": "imitation_wood_railing",
+      "name": "水泥仿木栏杆",
+      "category": "园林景观",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "仿木效果",
+          "description": "通过表面塑形工艺呈现自然木纹效果。"
+        },
+        {
+          "title": "结构稳固",
+          "description": "根据工程需求进行结构设计与安装。"
+        },
+        {
+          "title": "规格定制",
+          "description": "支持不同尺寸、造型及颜色定制。"
+        },
+        {
+          "title": "场景适用",
+          "description": "适用于公园、河道、景区及乡村景观。"
+        }
+      ],
+      "image_keywords": [
+        "水泥仿木栏杆",
+        "景区仿木护栏",
+        "公园仿木栏杆",
+        "仿木栏杆施工"
+      ]
+    },
+    {
+      "id": "musical_fountain",
+      "name": "景观音乐喷泉",
+      "category": "园林景观",
+      "main_product": false,
+      "advantages": [
+        {
+          "title": "景观设计",
+          "description": "根据场地条件规划喷泉整体布局。"
+        },
+        {
+          "title": "水型组合",
+          "description": "根据设计方案搭配不同喷泉水型。"
+        },
+        {
+          "title": "灯光搭配",
+          "description": "结合灯光效果提升夜间景观表现。"
+        },
+        {
+          "title": "整体施工",
+          "description": "提供景观音乐喷泉设计与施工服务。"
+        }
+      ],
+      "image_keywords": [
+        "大型景观音乐喷泉",
+        "园林水景喷泉",
+        "广场音乐喷泉",
+        "景观灯光喷泉"
+      ]
+    }
+  ],
+  "core_advantages": [
+    {
+      "id": "factory_direct",
+      "title": "源头厂家直供",
+      "description": "自有石材基地、塑形车间与专业施工团队，无中间商加价。",
+      "short_copy": "自有基地  厂家直供",
+      "keywords": [
+        "源头厂家",
+        "自有石材基地",
+        "塑形车间",
+        "专业施工团队"
+      ]
+    },
+    {
+      "id": "on_site_survey",
+      "title": "免费上门现场勘测",
+      "description": "支持按需调整尺寸、造型、风格及水系搭配。",
+      "short_copy": "现场勘测  按需定制",
+      "keywords": [
+        "上门勘测",
+        "现场规划",
+        "尺寸定制",
+        "造型定制"
+      ]
+    },
+    {
+      "id": "mature_craft",
+      "title": "工艺成熟稳固",
+      "description": "采用天然石古法堆叠、塑石钢结构加固等工艺。",
+      "short_copy": "成熟工艺  结构加固",
+      "keywords": [
+        "天然石堆叠",
+        "塑石工艺",
+        "钢结构加固"
+      ]
+    },
+    {
+      "id": "after_sales",
+      "title": "完善售后保障",
+      "description": "后期可提供维护、翻新、修补服务。",
+      "short_copy": "维护翻新  售后服务",
+      "keywords": [
+        "后期维护",
+        "翻新服务",
+        "修补服务"
+      ]
+    }
+  ],
+  "service_process": [
+    {
+      "step": 1,
+      "id": "design",
+      "name": "方案设计",
+      "description": "结合场地与使用需求规划"
+    },
+    {
+      "step": 2,
+      "id": "framework_production",
+      "name": "骨架生产",
+      "description": "自有工厂，按图加工"
+    },
+    {
+      "step": 3,
+      "id": "construction",
+      "name": "施工安装",
+      "description": "自有团队，配套施工"
+    },
+    {
+      "step": 4,
+      "id": "operation_guidance",
+      "name": "使用指导",
+      "description": "操作维护提前讲清楚"
+    }
+  ],
+  "customer_pain_points": [
+    {
+      "id": "design_difficulty",
+      "title": "设计难",
+      "description": "缺乏专业设计方案，建筑风格与现场环境难以协调。",
+      "solution": "提供现场勘测与定制设计方案。"
+    },
+    {
+      "id": "quality_concerns",
+      "title": "质量难",
+      "description": "担心施工工艺不过关，建筑结构不稳、后期容易损坏。",
+      "solution": "结合工程需求进行工艺选择与结构施工。"
+    },
+    {
+      "id": "supplier_selection",
+      "title": "厂家难选",
+      "description": "市场施工团队良莠不齐，缺乏真实案例和可靠保障。",
+      "solution": "展示企业实际工程案例与施工团队。"
+    },
+    {
+      "id": "cost_control",
+      "title": "成本难控",
+      "description": "前期报价不透明，担心施工过程中增加费用。",
+      "solution": "根据现场情况和施工需求沟通工程报价。"
+    },
+    {
+      "id": "construction_coordination",
+      "title": "施工难协调",
+      "description": "设计、生产、施工分散，沟通成本高，影响工程进度。",
+      "solution": "设计、定制、施工一站式对接。"
+    },
+    {
+      "id": "schedule_concerns",
+      "title": "工期难保障",
+      "description": "担心施工延期，影响整体项目交付。",
+      "solution": "结合项目实际情况制定施工安排。"
+    },
+    {
+      "id": "maintenance_concerns",
+      "title": "维护难",
+      "description": "户外建筑容易老化、开裂，缺乏完善的售后维修服务。",
+      "solution": "提供后期维护、翻新及修补服务。"
+    }
+  ],
+  "project_cases": [
+    {
+      "name": "北京大兴野生动物园假山假树工程",
+      "location": "北京大兴",
+      "category": "假山假树工程"
+    },
+    {
+      "name": "北京香山公园假山项目",
+      "location": "北京",
+      "category": "假山工程"
+    },
+    {
+      "name": "北京慕田峪长城仿木栏杆工程",
+      "location": "北京",
+      "category": "仿木栏杆工程"
+    },
+    {
+      "name": "承德围场塞罕坝林场万米仿木栏杆项目",
+      "location": "河北承德围场",
+      "category": "仿木栏杆工程"
+    }
+  ],
+  "application_scenes": [
+    {
+      "name": "美丽乡村",
+      "keywords": [
+        "村口牌楼",
+        "乡村假山",
+        "仿木栏杆",
+        "乡村景观"
+      ]
+    },
+    {
+      "name": "旅游景区",
+      "keywords": [
+        "景区假山",
+        "古建凉亭",
+        "景观喷泉",
+        "仿古建筑"
+      ]
+    },
+    {
+      "name": "森林公园",
+      "keywords": [
+        "自然假山",
+        "仿木栏杆",
+        "园林造景"
+      ]
+    },
+    {
+      "name": "校园环境",
+      "keywords": [
+        "校园景观",
+        "园林凉亭",
+        "景观雕塑"
+      ]
+    },
+    {
+      "name": "厂区美化",
+      "keywords": [
+        "厂区假山",
+        "园林绿化",
+        "景观喷泉"
+      ]
+    },
+    {
+      "name": "市政公园",
+      "keywords": [
+        "园林假山",
+        "古建景观",
+        "仿木护栏"
+      ]
+    },
+    {
+      "name": "寺庙道观",
+      "keywords": [
+        "仿古寺庙",
+        "古建牌楼",
+        "古建凉亭"
+      ]
+    }
+  ],
+  "content_generation_rules": {
+    "priority": [
+      "company",
+      "main_business",
+      "products",
+      "core_advantages",
+      "project_cases",
+      "service_process"
+    ],
+    "marketing_focus": [
+      "假山定制安装",
+      "量身定制施工方案",
+      "源头厂家直供",
+      "专业施工团队",
+      "设计定制施工一站式落地",
+      "全国上门施工"
+    ],
+    "forbidden": [
+      "虚构企业资质",
+      "虚构工程案例",
+      "虚构客户评价",
+      "虚构生产设备",
+      "虚构产能数据",
+      "虚构施工承诺",
+      "夸大产品性能",
+      "未经证实的行业排名"
+    ],
+    "data_usage": {
+      "company_name": "使用企业全称或简称",
+      "phone": "所有需要联系电话的素材统一使用企业电话",
+      "factory_area": "可以使用5000㎡厂房",
+      "industry_experience": "可以使用10余年行业经验",
+      "project_cases": "仅使用提供的真实案例",
+      "missing_information": "未提供的信息不允许模型自行编造"
+    }
+  }
+}

@@ -1,14 +1,14 @@
 {
-    "selected_image": "ee3f12368f66a5352751c2fd4baa2458.jpg",
+    "selected_image": "test_2_final.png",
     "original_size": [
-        860,
-        768
+        2048,
+        2048
     ],
     "target_ratio": "4:3",
     "operation": "outpainting",
     "final_size": [
-        1024,
-        768
+        2732,
+        2049
     ],
     "success": true
 }

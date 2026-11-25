@@ -1,0 +1,7 @@
+cv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+# 配置文件（包含 API Key）
+config.py

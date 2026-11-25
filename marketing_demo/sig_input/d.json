@@ -1,0 +1,41 @@
+{
+  "id": "product_main",
+  "name": "产品主图",
+  "required": true,
+  "count": "按产品分类及产品数量生成",
+  "size": {
+    "width": 800,
+    "height": 600,
+    "unit": "px"
+  },
+  "aspect_ratio": "4:3",
+  "filename": "{company_name}_主图{index}.png",
+  "color_tone": "红色",
+  "content": {
+    "items": [
+      "产品名称",
+      "产品图片",
+      "产品优势",
+      "厂家优势"
+    ],
+    "product_advantages": {
+      "count": "2-4",
+      "examples": [
+        "坚固耐用",
+        "雕刻精细"
+      ]
+    },
+    "factory_advantages": [
+      "源头厂家",
+      "批量供应",
+      "按需定制"
+    ],
+    "visual_style": [
+      "与品牌主色调一致",
+      "产品单体抠图",
+      "场景化展示",
+      "图文结合排版",
+      "突出产品主体"
+    ]
+  }
+}

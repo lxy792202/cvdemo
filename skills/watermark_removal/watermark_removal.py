@@ -6,7 +6,14 @@ import shutil
 import json
 
 from pathlib import Path
+import sys
+from pathlib import Path
 
+# 获取项目根目录 demo
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+# 添加到 Python 模块搜索路径
+sys.path.insert(0, str(PROJECT_ROOT))
 from config import BASE_URL, API_KEY, IMAGE_MODEL
 from test_image_analysis import analyze_image
 
@@ -154,7 +161,7 @@ def run(image_path, output_path):
 if __name__ == "__main__":
 
     result = run(
-        "test.jpg",
+        "test_3.jpg",
         "output/test_no_watermark.png"
     )
 

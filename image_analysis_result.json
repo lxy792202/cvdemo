@@ -1,6 +1,9 @@
 {
-    "image_id": "test_3",
-    "required_skills": [
-        "watermark_removal"
+    "success": true,
+    "original_image": "test_3.jpg",
+    "final_image": "output/test_3/test_3_final.png",
+    "executed_skills": [
+        "watermark_removal",
+        "background_replacement"
     ]
 }

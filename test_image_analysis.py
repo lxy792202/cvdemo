@@ -242,6 +242,152 @@ background_replacement
 
     return result
 
+def process_image(image_path, final_dir, process_dir):
+
+    image_path = Path(image_path)
+
+    # 1. AI 分析
+    analysis_result = analyze_image(image_path)
+    required_skills = analysis_result["required_skills"]
+
+    print("\n需要执行的 Skill：", required_skills)
+
+    # 2. 创建当前图片的过程目录
+    image_process_dir = process_dir / image_path.stem
+    image_process_dir.mkdir(parents=True, exist_ok=True)
+
+    # 3. 注册 Skill
+    from skills.watermark_removal.watermark_removal import run as watermark_run
+    from skills.image_enhancement.image_enhancement import run as enhancement_run
+    from skills.background_replacement.background_replacement import run as background_run
+
+    skill_registry = {
+        "watermark_removal": watermark_run,
+        "image_enhancement": enhancement_run,
+        "background_replacement": background_run
+    }
+
+    # 4. Skill 执行顺序
+    execution_order = [
+        "watermark_removal",
+        "image_enhancement",
+        "background_replacement"
+    ]
+
+    current_image = image_path
+
+    # 最终图片路径
+    final_path = final_dir / f"{image_path.stem}_final.png"
+
+    # 实际需要执行的 Skill
+    selected_skills = [
+        skill for skill in execution_order
+        if skill in required_skills
+    ]
+
+    # 5. 依次执行
+    for index, skill_name in enumerate(selected_skills, 1):
+
+        print(f"\n开始执行：{skill_name}")
+
+        # 最后一个 Skill 输出到最终目录
+        # 同时也保留一份在过程目录
+        if index == len(selected_skills):
+            output_path = image_process_dir / f"{index:02d}_{skill_name}.png"
+        else:
+            output_path = image_process_dir / f"{index:02d}_{skill_name}.png"
+
+        result = skill_registry[skill_name](
+            image_path=str(current_image),
+            output_path=str(output_path)
+        )
+
+        if not result["success"]:
+            raise RuntimeError(f"{skill_name} 执行失败")
+
+        current_image = Path(result["image_path"])
+
+    # 6. 复制最终结果到独立最终目录
+    import shutil
+
+    if selected_skills:
+        shutil.copy2(current_image, final_path)
+    else:
+        # 不需要处理时，直接复制原图
+        shutil.copy2(image_path, final_path)
+
+    return {
+        "success": True,
+        "original_image": str(image_path),
+        "final_image": str(final_path),
+        "process_directory": str(image_process_dir),
+        "executed_skills": selected_skills
+    }
+
+def process_folder(folder_path):
+
+    folder_path = Path(folder_path)
+
+    if not folder_path.exists() or not folder_path.is_dir():
+        raise FileNotFoundError(f"文件夹不存在：{folder_path}")
+
+    image_extensions = {
+        ".jpg", ".jpeg", ".png", ".webp", ".bmp"
+    }
+
+    image_files = sorted([
+        p for p in folder_path.iterdir()
+        if p.is_file() and p.suffix.lower() in image_extensions
+    ])
+
+    if not image_files:
+        print("没有找到图片")
+        return []
+
+    # 两个独立输出目录
+    final_dir = Path("final_output")
+    process_dir = Path("process_output")
+
+    final_dir.mkdir(parents=True, exist_ok=True)
+    process_dir.mkdir(parents=True, exist_ok=True)
+
+    results = []
+
+    print(f"共发现 {len(image_files)} 张图片")
+
+    for index, image_path in enumerate(image_files, 1):
+
+        print(f"\n========== {index}/{len(image_files)} ==========")
+
+        try:
+            result = process_image(
+                image_path,
+                final_dir,
+                process_dir
+            )
+
+            results.append(result)
+
+            print("处理成功：", result["final_image"])
+
+        except Exception as e:
+
+            print("处理失败：", image_path.name, repr(e))
+
+            results.append({
+                "success": False,
+                "original_image": str(image_path),
+                "error": repr(e)
+            })
+
+    success_count = sum(r["success"] for r in results)
+
+    print("\n========== 批量处理完成 ==========")
+    print(f"总数：{len(image_files)}")
+    print(f"成功：{success_count}")
+    print(f"失败：{len(results) - success_count}")
+
+    return results
 
 # =========================
 # 5. 测试入口
@@ -249,36 +395,23 @@ background_replacement
 
 if __name__ == "__main__":
 
-    image_path = "test_3.jpg"
+    folder_path = "input"
 
     try:
 
-        result = analyze_image(image_path)
+        results = process_folder(folder_path)
 
-        print("\n========== Skill 调度结果 ==========")
+        output_path = Path("image_processing_results.json")
 
-        print(json.dumps(
-            result,
-            ensure_ascii=False,
-            indent=4
-        ))
-
-        # 保存 JSON
-        output_path = Path("image_analysis_result.json")
-
-        with open(
-            output_path,
-            "w",
-            encoding="utf-8"
-        ) as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(
-                result,
+                results,
                 f,
                 ensure_ascii=False,
                 indent=4
             )
 
-        print(f"\n分析成功！结果保存至：{output_path}")
+        print(f"\n处理记录已保存：{output_path}")
 
     except Exception as e:
 

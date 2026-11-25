@@ -1,0 +1,479 @@
+
+{
+  "global_rules": {
+    "language": "zh-CN",
+    "output_format": "image",
+    "design_principles": [
+      "根据企业所属行业选择统一的视觉风格",
+      "所有图片保持统一的主色调、字体风格和视觉元素",
+      "文案通俗易懂，突出实际产品和企业优势",
+      "不得虚构企业资质、厂房面积、设备数量、产能、案例和服务承诺",
+      "企业信息优先使用提供的真实资料",
+      "缺少的数据不自行编造，可以省略或使用概括性表达",
+      "图片中的文字必须清晰、准确，不得出现乱码",
+      "根据投放场景选择合适的图片比例和排版方式"
+    ],
+    "image_quality": {
+      "resolution": "高清",
+      "text_readability": "文字清晰可读",
+      "composition": "布局合理，重点突出",
+      "visual_consistency": "统一品牌视觉风格"
+    }
+  },
+  "pc_design": {
+    "description": "PC端企业店铺设计素材",
+    "materials": [
+      {
+        "id": "logo",
+        "name": "公司Logo",
+        "required": true,
+        "count": 1,
+        "size": {
+          "width": 1120,
+          "height": 217,
+          "unit": "px"
+        },
+        "aspect_ratio": "1120:217",
+        "filename": "{company_name}_logo.png",
+        "content": {
+          "layout": "上下两排排版",
+          "background": "纯白色背景",
+          "options": [
+            {
+              "type": "short_name",
+              "items": [
+                "公司简称",
+                "公司Logo",
+                "厂家优势",
+                "联系电话"
+              ]
+            },
+            {
+              "type": "full_name",
+              "items": [
+                "公司全称",
+                "主营业务",
+                "联系电话"
+              ]
+            }
+          ],
+          "requirements": [
+            "品牌名称突出",
+            "信息排版整齐",
+            "整体简洁商务"
+          ]
+        }
+      },
+      {
+        "id": "company_intro",
+        "name": "公司介绍图",
+        "required": true,
+        "count": 1,
+        "size": {
+          "width": 790,
+          "height": 444,
+          "unit": "px"
+        },
+        "aspect_ratio": "16:9",
+        "filename": "{company_name}_公司简介.png",
+        "content": {
+          "image_subjects": [
+            "厂区",
+            "生产车间",
+            "生产线",
+            "产品组合",
+            "仓储",
+            "发货"
+          ],
+          "copywriting": {
+            "main_title": {
+              "min_chars": 6,
+              "max_chars": 15
+            },
+            "description": {
+              "target_chars": 30
+            },
+            "advantages": {
+              "count": "2-3",
+              "min_chars_per_item": 4,
+              "max_chars_per_item": 8
+            }
+          },
+          "requirements": [
+            "突出企业形象",
+            "图片与企业实际业务相关",
+            "文案简洁",
+            "图文排版协调"
+          ]
+        }
+      },
+      {
+        "id": "banner",
+        "name": "首页轮播图",
+        "required": true,
+        "count": 2,
+        "size": {
+          "width": 1420,
+          "height": 532,
+          "unit": "px"
+        },
+        "aspect_ratio": "710:266",
+        "filename": "{company_name}_banner{index}.png",
+        "content": [
+          {
+            "index": 1,
+            "theme": "主推产品",
+            "items": [
+              "主推产品图片",
+              "产品名称",
+              "产品优势",
+              "联系电话"
+            ]
+          },
+          {
+            "index": 2,
+            "theme": "多产品组合",
+            "items": [
+              "多种产品组合展示",
+              "主营产品介绍",
+              "企业优势",
+              "联系电话"
+            ]
+          },
+          {
+            "index": 3,
+            "theme": "企业实力",
+            "items": [
+              "企业实力展示",
+              "厂房或生产场景",
+              "企业真实经营数据",
+              "联系电话"
+            ],
+            "examples": [
+              "5000㎡厂房",
+              "10余年行业经验"
+            ],
+            "data_rule": "示例数据仅在企业资料真实提供时使用"
+          }
+        ]
+      },
+      {
+        "id": "product_main",
+        "name": "产品主图",
+        "required": true,
+        "count": "按产品分类及产品数量生成",
+        "size": {
+          "width": 800,
+          "height": 600,
+          "unit": "px"
+        },
+        "aspect_ratio": "4:3",
+        "filename": "{company_name}_主图{index}.png",
+        "content": {
+          "items": [
+            "产品名称",
+            "产品图片",
+            "产品优势",
+            "厂家优势"
+          ],
+          "product_advantages": {
+            "count": "2-4",
+            "examples": [
+              "坚固耐用",
+              "雕刻精细"
+            ]
+          },
+          "factory_advantages": [
+            "源头厂家",
+            "批量供应",
+            "按需定制"
+          ],
+          "visual_style": [
+            "与品牌主色调一致",
+            "产品单体抠图",
+            "场景化展示",
+            "图文结合排版",
+            "突出产品主体"
+          ]
+        }
+      },
+      {
+        "id": "home_advantages",
+        "name": "首页企业优势",
+        "required": true,
+        "count": 1,
+        "size": {
+          "width": 1420,
+          "height": "1000-1400",
+          "unit": "px"
+        },
+        "text_safe_width": 1200,
+        "filename": "{company_name}_优势.png",
+        "content": {
+          "sections": [
+            {
+              "id": "core_advantages",
+              "title": "企业核心优势",
+              "item_count": "3-4",
+              "description_max_chars": 30
+            },
+            {
+              "id": "service_process",
+              "title": "服务流程",
+              "item_count": "4-6",
+              "each_item": {
+                "name": "服务步骤名称",
+                "description_max_chars": 15
+              }
+            }
+          ],
+          "requirements": [
+            "上下分区设计",
+            "优势内容突出",
+            "流程清晰易懂",
+            "文字位于中间1200px有效区域"
+          ]
+        }
+      },
+      {
+        "id": "contact",
+        "name": "联系我们",
+        "required": true,
+        "count": 1,
+        "size": {
+          "width": 1420,
+          "height": 444,
+          "unit": "px"
+        },
+        "aspect_ratio": "710:222",
+        "filename": "{company_name}_联系我们.png",
+        "content": {
+          "background_options": [
+            "团队协作场景",
+            "厂区场景",
+            "扁平化商务设计"
+          ],
+          "layout": {
+            "left_blank_width": 500,
+            "unit": "px",
+            "purpose": "预留文字和联系信息区域"
+          },
+          "requirements": [
+            "与品牌主色调一致",
+            "背景适当降低亮度",
+            "可以增加半透明遮罩",
+            "确保文字清晰",
+            "突出联系电话和咨询信息"
+          ]
+        }
+      }
+      
+    ]
+  },
+  "landing_page": {
+    "description": "750px移动端企业营销落地页",
+    "canvas_width": 750,
+    "unit": "px",
+    "required_modules": [
+      "hero",
+      "product_service",
+      "core_advantages",
+      "product_details",
+      "service_process",
+      "contact"
+    ],
+    "modules": [
+      {
+        "id": "hero",
+        "name": "首屏头图",
+        "required": true,
+        "content": [
+          "主营业务",
+          "企业核心定位",
+          "主要优势",
+          "主标题",
+          "副标题",
+          "产品使用场景配图"
+        ],
+        "requirements": [
+          "第一屏突出企业主营业务",
+          "主副标题层次清晰",
+          "突出核心优势",
+          "视觉上吸引用户继续浏览"
+        ]
+      },
+      {
+        "id": "pain_points",
+        "name": "用户痛点模块",
+        "required": false,
+        "count": "3-4",
+        "content_options": [
+          "产品不会选",
+          "产品质量顾虑",
+          "交付周期顾虑",
+          "售后服务顾虑",
+          "产品效果顾虑"
+        ],
+        "requirements": [
+          "只选择与行业相关的真实痛点",
+          "避免夸大问题",
+          "不同痛点之间避免重复"
+        ]
+      },
+      {
+        "id": "product_service",
+        "name": "产品及服务范围",
+        "required": true,
+        "data_source": "企业产品资料及产品分类",
+        "content": [
+          "产品分类",
+          "产品名称",
+          "产品图片",
+          "服务范围"
+        ],
+        "requirements": [
+          "明确客户能够购买的产品或获得的服务",
+          "优先展示核心主营产品",
+          "产品图片与实际产品保持一致"
+        ]
+      },
+      {
+        "id": "core_advantages",
+        "name": "企业核心优势",
+        "required": true,
+        "item_count": "3-4",
+        "content": [
+          "优势标题",
+          "详细文字说明",
+          "配套图片"
+        ],
+        "data_source": [
+          "厂房信息",
+          "生产设备",
+          "团队情况",
+          "产能数据"
+        ],
+        "requirements": [
+          "突出企业真实实力",
+          "说明具体优势",
+          "不虚构企业数据"
+        ]
+      },
+      {
+        "id": "product_details",
+        "name": "产品细节及优势",
+        "required": true,
+        "content": [
+          "产品关键特点",
+          "采购关注点",
+          "产品细节特写",
+          "具体参数",
+          "结构说明"
+        ],
+        "requirements": [
+          "突出产品实际特点",
+          "通过图片展示细节",
+          "参数以企业提供的资料为准",
+          "不虚构产品性能"
+        ]
+      },
+      {
+        "id": "application_scenes",
+        "name": "应用场景",
+        "required": false,
+        "content": [
+          "应用场景图片",
+          "场景名称",
+          "简短说明"
+        ],
+        "requirements": [
+          "展示产品适用场景",
+          "图片符合产品实际用途"
+        ]
+      },
+      {
+        "id": "project_cases",
+        "name": "工程案例",
+        "required": false,
+        "data_source": "企业实际工程案例",
+        "content": [
+          "项目照片",
+          "项目名称",
+          "项目基本信息"
+        ],
+        "requirements": [
+          "仅使用企业真实案例",
+          "不虚构项目名称和施工信息"
+        ]
+      },
+      {
+        "id": "qualifications",
+        "name": "资质荣誉",
+        "required": false,
+        "data_source": "企业资质证书及检测报告",
+        "content": [
+          "资质证书",
+          "检测报告",
+          "相关许可",
+          "荣誉证书"
+        ],
+        "requirements": [
+          "优先使用真实证书图片",
+          "不得生成虚假证书"
+        ]
+      },
+      {
+        "id": "service_process",
+        "name": "服务流程",
+        "required": true,
+        "step_count": "4-6",
+        "content": [
+          "流程步骤名称",
+          "步骤说明",
+          "流程配图或图标"
+        ],
+        "requirements": [
+          "从客户咨询开始",
+          "流程符合企业实际业务",
+          "步骤名称简洁",
+          "每步说明不超过15字",
+          "流程顺序清晰"
+        ]
+      },
+      {
+        "id": "contact",
+        "name": "联系咨询",
+        "required": true,
+        "content": [
+          "联系电话",
+          "企业名称",
+          "咨询引导文案",
+          "咨询按钮",
+          "表单区域"
+        ],
+        "requirements": [
+          "突出联系电话",
+          "咨询入口清晰",
+          "联系方式使用企业真实信息"
+        ]
+      }
+    ],
+    "copywriting_rules": [
+      "通俗易懂，不使用空泛宣传语",
+      "不夸大产品效果",
+      "不制造用户恐慌",
+      "不同模块的文案避免重复",
+      "不虚构服务承诺",
+      "适合手机端阅读",
+      "短句优先，重点信息突出"
+    ],
+    "design_rules": [
+      "按照行业模板确定统一设计风格",
+      "全页面统一主色调",
+      "模块之间保持合理间距",
+      "突出产品图片和企业核心优势",
+      "采用移动端纵向浏览布局",
+      "文字清晰，避免信息过度堆叠"
+    ]
+  }
+}
