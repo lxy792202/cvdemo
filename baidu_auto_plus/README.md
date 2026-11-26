@@ -1,5 +1,17 @@
 # 百度营销平台自动化 MVP
 
+## 0. 全链路编排（资源包 → 本上传器）
+
+本目录只负责「上传」这一段。从资源包到平台的一键全链路在 demo 根目录：
+
+```bash
+cd .. && cv/bin/python run_e2e.py --products 1     # 先跑通一个产品
+cd .. && cv/bin/python run_e2e.py --all-products   # 再跑全部
+```
+
+编排细节（流水线阶段、幂等规则、换包流程）见根目录 `README.md`。
+
+
 ## 1. 安装
 
 在项目目录中运行：

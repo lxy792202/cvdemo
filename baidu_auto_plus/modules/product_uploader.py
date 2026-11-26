@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import re
 import time
 import logging
 from common import (
@@ -219,11 +220,21 @@ def create_one_product(page, config, product, logger):
     try:
         safe_close_known_popups(page, logger)
         _reset_product_form(page, timeout, logger)
-        page.get_by_role("button", name="新建产品", exact=True).click(timeout=timeout)
-        # Recorded as a span filter; plain get_by_text misses it on some builds.
+        # 「新建产品」是下拉按钮：点击后应展开含「手动录入」的菜单；
+        # 偶发第一次点击不展开（页面刚渲染完），重试最多 3 次。
         manual = page.locator("span").filter(has_text="手动录入").first
-        if manual.count():
-            manual.click(timeout=timeout)
+        for attempt in range(3):
+            page.get_by_role("button", name="新建产品", exact=True).click(timeout=timeout)
+            try:
+                manual.wait_for(state="visible", timeout=5000)
+                break
+            except Exception:
+                logger.info("第 %s 次点「新建产品」未展开菜单，重试", attempt + 1)
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(800)
+        # Recorded as a span filter; plain get_by_text misses it on some builds.
+        if manual.count() and manual.first.is_visible():
+            manual.first.click(timeout=timeout)
         else:
             page.get_by_text("手动录入", exact=True).click(timeout=timeout)
         # 表单异步渲染；等分类区出现再点分类，避免在列表页空点
@@ -338,6 +349,29 @@ def _ensure_on_product_page(page, config, logger):
         target.wait_for_timeout(2000)
     except Exception:
         pass
+    # 兜底：菜单/span 都失效时直连产品管理 URL（userid 从标签页地址解析）
+    if not target.get_by_role("button", name="新建产品", exact=True).count():
+        uid = None
+        for tab in context.pages:
+            m = re.search(r"(?:userid|ucUserId)=(\d+)", tab.url) or \
+                re.search(r"/user/(\d+)/", tab.url)
+            if m:
+                uid = m.group(1)
+                break
+        if uid:
+            logger.info("菜单导航失效，直连产品管理 URL（userid=%s）", uid)
+            target.goto(
+                f"https://wutong.baidu.com/material/user/{uid}/product"
+                f"?botMessageLength=0&isBotRestore=1&ucUserId={uid}",
+                wait_until="domcontentloaded", timeout=30000,
+            )
+            safe_close_known_popups(target, logger)
+            # SPA 渲染慢，显式等按钮出现（实测约 5s）
+            try:
+                target.get_by_role("button", name="新建产品", exact=True).first.wait_for(
+                    state="visible", timeout=15000)
+            except Exception:
+                pass
     if not target.get_by_role("button", name="新建产品", exact=True).count():
         raise RuntimeError(
             f"导航后仍找不到「新建产品」按钮；当前标签页：{[p.url for p in context.pages]}"
