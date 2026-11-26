@@ -1,0 +1,39 @@
+{
+  "product_name": "古建四合院",
+  "long_title": "古建四合院定制设计施工厂家承接古建工程",
+  "short_title": "古建四合院定制施工",
+  "tags": [
+    "经典布局",
+    "空间合理",
+    "建筑精美",
+    "舒适宜居",
+    "整体定制"
+  ],
+  "description": "传承传统四合院空间格局，体现中式建筑文化与居住美学。 庭院与房屋相互融合，布局规整，空间层次丰富。 融合青砖灰瓦、木质门窗、雕花构件等传统元素。 兼顾采光、通风、私密性与日常居住需求。 可根据土地面积、使用功能及建筑风格，量身打造专属院落。",
+  "category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
+  "images": {
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/古建四合院/main_image.jpg",
+    "square": "/Users/a1/Desktop/demo/output/02_main_images/古建四合院/main_image_1_1.jpg",
+    "detail": "/Users/a1/Desktop/demo/output/02_main_images/古建四合院/product_collage.jpg"
+  },
+  "_generated_by": "tools/build_data.py",
+  "_文案来源": "marketing_demo/input/company.json",
+  "_图片目录": "/Users/a1/Desktop/demo/output/02_main_images/古建四合院",
+  "_平台分类": "古建工程",
+  "_待确认": [
+    "category_clicks 用的是全局默认值，平台分类树需逐个核对"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "product_name": "古建庙宇",
+  "long_title": "古建庙宇定制设计施工厂家承接古建工程",
+  "short_title": "古建庙宇定制施工",
+  "tags": [
+    "传统风貌",
+    "结构严谨",
+    "匠心工艺",
+    "品质选材",
+    "整体承建"
+  ],
+  "description": "传承中式古建筑特色，体现庄重典雅的建筑气韵。 注重建筑比例与整体布局，兼顾美观性与结构稳定性。 结合传统木作、斗拱、雕刻等工艺，展现古建文化魅力。 精选适用建筑材料，注重防腐、防潮及耐久性能。 可根据场地条件和建筑需求，提供设计、制作与施工服务。",
+  "category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
+  "images": {
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/古建庙宇/main_image.jpg",
+    "square": "/Users/a1/Desktop/demo/output/02_main_images/古建庙宇/main_image_1_1.jpg",
+    "detail": "/Users/a1/Desktop/demo/output/02_main_images/古建庙宇/product_collage.jpg"
+  },
+  "_generated_by": "tools/build_data.py",
+  "_文案来源": "marketing_demo/input/company.json",
+  "_图片目录": "/Users/a1/Desktop/demo/output/02_main_images/古建庙宇",
+  "_平台分类": "古建工程",
+  "_待确认": [
+    "category_clicks 用的是全局默认值，平台分类树需逐个核对"
+  ]
+}

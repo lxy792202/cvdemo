@@ -70,7 +70,11 @@ FORBIDDEN_WORDS = [
 ]
 
 MANIFEST_JS = """
-(dialogSelectors, dismissLabels, forbiddenWords, limit) => {
+([dialogSelectors, dismissLabels, forbiddenWords, limit]) => {
+  // Refs must be rebuilt from scratch every pass; stale attributes would make
+  // a later collect_manifest() skip real elements and shift every index.
+  document.querySelectorAll('[data-recovery-ref]')
+    .forEach((el) => el.removeAttribute('data-recovery-ref'));
   const visible = (el) => {
     const r = el.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) return false;
@@ -88,15 +92,26 @@ MANIFEST_JS = """
     return z;
   };
 
-  let scopes = dialogSelectors
+  // A node can match several selectors ([role=dialog] and [class*=dialog]), and
+  // scopes can nest. Dedupe first: feeding duplicate/equal nodes to sort() with
+  // an inconsistent comparator corrupts the ordering in V8 and silently drops
+  // the real dialog out of the slice below.
+  const matched = dialogSelectors
     .flatMap((sel) => Array.from(document.querySelectorAll(sel)))
     .filter(visible);
-  if (scopes.length) {
-    scopes.sort((a, b) => (zOf(b) - zOf(a)) || (b.compareDocumentPosition(a) & 2 ? 1 : -1));
-    scopes = scopes.slice(0, 3);
-  } else {
-    scopes = [document.body];
+  const uniq = [];
+  const seenScope = new Set();
+  for (const el of matched) {
+    if (seenScope.has(el)) continue;
+    seenScope.add(el);
+    uniq.push(el);
   }
+  const outer = uniq.filter((el) => !uniq.some((o) => o !== el && o.contains(el)));
+  const scopes = (outer.length ? outer : uniq)
+    .slice()
+    .sort((a, b) => zOf(b) - zOf(a))
+    .slice(0, 5);
+  if (!scopes.length) scopes.push(document.body);
 
   const clickable = 'a[href], button, input, textarea, select, [role="button"], '
     + '[role="checkbox"], [role="radio"], [role="tab"], [role="menuitem"], '
@@ -106,7 +121,7 @@ MANIFEST_JS = """
   const out = [];
   for (const scope of scopes) {
     for (const el of scope.querySelectorAll(clickable)) {
-      if (!visible(el) || seen.has(el) || el.hasAttribute('data-recovery-ref')) continue;
+      if (!visible(el) || seen.has(el)) continue;
       const label = (el.getAttribute('aria-label')
         || el.getAttribute('title')
         || el.getAttribute('placeholder')

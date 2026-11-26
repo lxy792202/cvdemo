@@ -1,0 +1,38 @@
+{
+  "product_name": "塑石假山",
+  "long_title": "塑石假山定制设计施工厂家承接园林景观工程",
+  "short_title": "塑石假山定制施工",
+  "tags": [
+    "造型定制",
+    "工艺精细",
+    "结构加固",
+    "场景广泛"
+  ],
+  "description": "根据现场地形和景观风格，量身设计假山造型。 结合塑形工艺，打造自然山石纹理与层次效果。 采用钢结构骨架加固方式，兼顾造型与结构稳定性。 适用于公园、景区、庭院及各类园林景观工程。",
+  "category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
+  "images": {
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/假山/main_image.jpg",
+    "square": "/Users/a1/Desktop/demo/output/02_main_images/假山/main_image_1_1.jpg",
+    "detail": "/Users/a1/Desktop/demo/output/02_main_images/假山/product_collage.jpg"
+  },
+  "_generated_by": "tools/build_data.py",
+  "_文案来源": "marketing_demo/input/company.json",
+  "_图片目录": "/Users/a1/Desktop/demo/output/02_main_images/假山",
+  "_平台分类": "园林景观",
+  "_待确认": [
+    "category_clicks 用的是全局默认值，平台分类树需逐个核对"
+  ]
+}

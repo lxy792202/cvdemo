@@ -1,0 +1,62 @@
+{
+  "site_name": "河北硕景园林古建筑工程有限公司",
+  "modules": [
+    {
+      "module_id": "hero",
+      "name": "首屏头图",
+      "psd": "/Users/a1/Desktop/demo/output/04_designs/落地页/hero/落地页_首屏头图.psd",
+      "png_preview": "/Users/a1/Desktop/demo/output/04_designs/落地页/hero/落地页_首屏头图.png",
+      "width": 750,
+      "height": 1000,
+      "layer_ops": {}
+    },
+    {
+      "module_id": "product_service",
+      "name": "产品及服务范围",
+      "psd": "/Users/a1/Desktop/demo/output/04_designs/落地页/product_service/落地页_产品及服务范围.psd",
+      "png_preview": "/Users/a1/Desktop/demo/output/04_designs/落地页/product_service/落地页_产品及服务范围.png",
+      "width": 750,
+      "height": 1210,
+      "layer_ops": {}
+    },
+    {
+      "module_id": "core_advantages",
+      "name": "企业核心优势",
+      "psd": "/Users/a1/Desktop/demo/output/04_designs/落地页/core_advantages/落地页_企业核心优势.psd",
+      "png_preview": "/Users/a1/Desktop/demo/output/04_designs/落地页/core_advantages/落地页_企业核心优势.png",
+      "width": 750,
+      "height": 1200,
+      "layer_ops": {}
+    },
+    {
+      "module_id": "product_details",
+      "name": "产品细节及优势",
+      "psd": "/Users/a1/Desktop/demo/output/04_designs/落地页/product_details/落地页_产品细节及优势.psd",
+      "png_preview": "/Users/a1/Desktop/demo/output/04_designs/落地页/product_details/落地页_产品细节及优势.png",
+      "width": 750,
+      "height": 1200,
+      "layer_ops": {}
+    },
+    {
+      "module_id": "service_process",
+      "name": "服务流程",
+      "psd": "/Users/a1/Desktop/demo/output/04_designs/落地页/service_process/落地页_服务流程.psd",
+      "png_preview": "/Users/a1/Desktop/demo/output/04_designs/落地页/service_process/落地页_服务流程.png",
+      "width": 750,
+      "height": 900,
+      "layer_ops": {}
+    },
+    {
+      "module_id": "contact",
+      "name": "联系咨询",
+      "psd": "/Users/a1/Desktop/demo/output/04_designs/落地页/contact/落地页_联系咨询.psd",
+      "png_preview": "/Users/a1/Desktop/demo/output/04_designs/落地页/contact/落地页_联系咨询.png",
+      "width": 750,
+      "height": 800,
+      "layer_ops": {}
+    }
+  ],
+  "_generated_by": "tools/build_data.py",
+  "_source_plan": "/Users/a1/Desktop/demo/output/04_plan.json",
+  "_说明": "modules 顺序取自 04_plan.json 中 region=落地页 的条目顺序。"
+}

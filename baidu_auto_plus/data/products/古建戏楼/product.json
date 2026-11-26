@@ -1,0 +1,37 @@
+{
+  "product_name": "古建戏楼",
+  "long_title": "古建戏楼定制设计施工厂家，源头厂家直供、免费上门现场勘测",
+  "short_title": "古建戏楼定制施工",
+  "tags": [
+    "源头厂家直供",
+    "免费上门现场勘测",
+    "工艺成熟稳固"
+  ],
+  "description": "",
+  "category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
+  "images": {
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/古建戏楼/main_image.jpg",
+    "square": "/Users/a1/Desktop/demo/output/02_main_images/古建戏楼/main_image_1_1.jpg",
+    "detail": "/Users/a1/Desktop/demo/output/02_main_images/古建戏楼/product_collage.jpg"
+  },
+  "_generated_by": "tools/build_data.py",
+  "_文案来源": "output/04_designs/PC端/product_main_古建戏楼/河北硕景园林古建筑工程有限公司_主图5.meta.json（known=False）",
+  "_图片目录": "/Users/a1/Desktop/demo/output/02_main_images/古建戏楼",
+  "_平台分类": "",
+  "_待确认": [
+    "category_clicks 用的是全局默认值，平台分类树需逐个核对"
+  ]
+}

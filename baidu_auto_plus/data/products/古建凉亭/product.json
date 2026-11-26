@@ -1,0 +1,39 @@
+{
+  "product_name": "古建凉亭",
+  "long_title": "古建凉亭定制设计施工厂家承接古建园林工程",
+  "short_title": "古建凉亭定制施工",
+  "tags": [
+    "古典雅致",
+    "工艺精湛",
+    "坚固耐用",
+    "场景多样",
+    "支持定制"
+  ],
+  "description": "融合传统建筑美学，造型优美，彰显中式园林韵味。 采用传统榫卯工艺，结构合理，细节精致。 精选优质建筑材料，结构稳固，适应多种户外环境。 适用于公园、庭院、景区、广场及园林景观。 可根据场地尺寸、建筑风格及客户需求进行个性化设计。",
+  "category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
+  "images": {
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/古建凉亭/main_image.jpg",
+    "square": "/Users/a1/Desktop/demo/output/02_main_images/古建凉亭/main_image_1_1.jpg",
+    "detail": "/Users/a1/Desktop/demo/output/02_main_images/古建凉亭/product_collage.jpg"
+  },
+  "_generated_by": "tools/build_data.py",
+  "_文案来源": "marketing_demo/input/company.json",
+  "_图片目录": "/Users/a1/Desktop/demo/output/02_main_images/古建凉亭",
+  "_平台分类": "古建园林",
+  "_待确认": [
+    "category_clicks 用的是全局默认值，平台分类树需逐个核对"
+  ]
+}

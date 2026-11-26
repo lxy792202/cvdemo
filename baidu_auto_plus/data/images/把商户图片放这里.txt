@@ -1,0 +1,4 @@
+按 data/company.json 里 images 的键名放对应文件：
+  logo.png     商家 LOGO
+  gallery.jpg  图片选择器第 2 行（用途待你确认）
+  main.jpg     商户主图

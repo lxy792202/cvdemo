@@ -8,51 +8,37 @@ ROOT = Path(__file__).resolve().parent
 # Toast/error copy Baidu's uploader shows when it rejects a file. A rejected
 # upload disappears after ~2s, so it must be polled for, not read afterwards.
 UPLOAD_ERROR_HINTS = [
-    "上传失败", "上传出错", "格式不支持", "不支持的格式", "大小不能超过",
-    "超过限制", "请重新上传", "网络异常", "图片太大", "尺寸不符", "失败，请",
+    # 只留强错误词：表单静态说明里也有「大小不能超过2MB」这类文案，
+    # 弱词会把帮助文本误判成上传失败。
+    "上传失败", "上传出错", "处理失败", "无法提交", "格式不支持", "不支持的格式",
+    "请重新上传", "网络异常", "图片太大", "尺寸不符", "失败，请",
+    "导入失败", "解析失败", "文件损坏", "psd解析", "PSD解析",
 ]
 
 THUMBNAIL_JS = """
 () => {
-  const scopes = Array.from(document.querySelectorAll(
-    '[role="dialog"], .vi-dialog, .dls-dialog, [class*="dialog"], '
-    + '[class*="upload"], [class*="Upload"], [class*="preview"], [class*="picture"]'
-  ));
-  const pool = scopes.length ? scopes : [document.body];
-  const seen = new Set();
+  // 只统计表单里的槽位缩略图；图片库/上传/预览等弹层里的 img 一律排除，
+  // 否则弹层网格的十几张缩略图会造成「上传已确认」假阳性。
+  const inOverlay = e => !!e.closest(
+    '[role="dialog"], veui-x-overlay, [class*="veui-overlay"], '
+    + '[class*="cc-creative-sdk-veui-dialog"], [class*="cc-creative-overlay"]'
+  );
   const usable = (src) => /^(https?:|blob:|data:image)/.test(src || '')
     && !/logo|icon|avatar|sprite/i.test(src || '');
-  let n = 0;
-  for (const scope of pool) {
-    for (const img of scope.querySelectorAll('img')) {
-      if (seen.has(img)) continue;
-      seen.add(img);
-      const r = img.getBoundingClientRect();
-      if (r.width < 8 || r.height < 8) continue;
-      if (!usable(img.currentSrc || img.src || '')) continue;
-      n++;
-    }
+  const srcs = [];
+  for (const img of document.querySelectorAll('img')) {
+    if (inOverlay(img)) continue;
+    const src = img.currentSrc || img.src;
+    if (usable(src) && !srcs.includes(src)) srcs.push(src);
   }
-  // Some uploaders render the result as a CSS background instead of an <img>.
-  for (const scope of pool) {
-    for (const el of scope.querySelectorAll('div, span, i, a')) {
-      if (seen.has(el)) continue;
-      const bg = getComputedStyle(el).backgroundImage || '';
-      const m = bg.match(/url\\(["']?(.*?)["']?\\)/);
-      if (!m || !usable(m[1])) continue;
-      const r = el.getBoundingClientRect();
-      if (r.width < 24 || r.height < 24) continue;
-      seen.add(el);
-      n++;
-    }
-  }
-  return n;
+  return srcs;
 }
 """
 
 TOAST_SELECTORS = [
+    # 只认真正的瞬态提示容器；tip/message 类选择器会命中表单静态帮助文案。
     '[class*="toast"]', '[class*="Toast"]', '[role="alert"]',
-    '[class*="message"]', '[class*="notice"]', '[class*="tip"]',
+    '[class*="notice"]', '.cc-creative-sdk-veui-alert-box-error',
 ]
 
 def setup_logging(config):
@@ -79,6 +65,12 @@ def wait_visible(locator, timeout=15000):
     locator.wait_for(state="visible", timeout=timeout)
     return locator
 
+
+def resolve_path(value, base):
+    """Accept an absolute path, or a path relative to `base`."""
+    path = Path(value)
+    return path if path.is_absolute() else Path(base) / path
+
 def safe_close_known_popups(page, logger=None):
     """Close only known, explicitly listed popup buttons; don't dismiss unknown dialogs.
 
@@ -99,17 +91,36 @@ def safe_close_known_popups(page, logger=None):
 
 def upload_local_file(page, image_path, timeout=15000):
     image_path = str(Path(image_path).resolve())
+    # The recording clicks 本地上传 before the file chooser appears; the raw
+    # input[type=file] may not be actionable until then.
+    try:
+        local = page.get_by_role("button", name="本地上传", exact=True)
+        if local.count() and local.first.is_visible():
+            # 本地上传 opens the OS-native file picker; intercept it instead of
+            # leaving a modal chooser stranded on the user's desktop.
+            with page.expect_file_chooser(timeout=timeout) as fc_info:
+                local.first.click(timeout=timeout)
+            fc_info.value.set_files(image_path)
+            return
+    except Exception:
+        pass
     file_inputs = page.locator('input[type="file"]')
     if file_inputs.count() == 0:
         raise RuntimeError("页面未找到 input[type=file]，请检查上传按钮是否打开上传窗口")
     file_inputs.first.set_input_files(image_path, timeout=timeout)
 
 
-def count_thumbnails(page):
+def image_signature(page):
+    """Sorted tuple of uploaded-image srcs. Changes on BOTH add and replace,
+    unlike a plain count which stays flat when an existing image is replaced."""
     try:
-        return int(page.evaluate(THUMBNAIL_JS))
+        return tuple(sorted(page.evaluate(THUMBNAIL_JS)))
     except Exception:
-        return 0
+        return ()
+
+
+def count_thumbnails(page):
+    return len(image_signature(page))
 
 
 def find_upload_error(page):
@@ -128,23 +139,41 @@ def find_upload_error(page):
     return ""
 
 
-def wait_upload_confirmed(page, before=0, timeout=30000, logger=None):
+def wait_upload_confirmed(page, before=None, before_sig=None, timeout=30000, logger=None):
     """Block until the uploaded image is provably present, or raise.
 
     Choosing a file and clicking confirm is NOT proof of success: the platform
     can reject the file (format/size/quota) with a toast that vanishes in ~2s,
     leaving the form imageless. Callers that skip this check only discover the
     problem at submit time, or silently publish a product with no picture.
+
+    Pass before_sig (preferred) to detect both adds and replaces; pass before
+    (a count) only for flows that strictly append new images.
     """
+    if before_sig is None and before is None:
+        before_sig = image_signature(page)
     deadline = time.monotonic() + timeout / 1000.0
     while time.monotonic() < deadline:
         hint = find_upload_error(page)
         if hint:
             raise RuntimeError(f"上传被平台拒绝：{hint}")
-        now = count_thumbnails(page)
-        if now > before:
-            if logger:
-                logger.info("上传已确认：缩略图 %s -> %s", before, now)
-            return now
+        if before_sig is not None:
+            now_sig = image_signature(page)
+            if now_sig != before_sig:
+                if logger:
+                    added = [s for s in now_sig if s not in before_sig]
+                    removed = [s for s in before_sig if s not in now_sig]
+                    logger.info("上传已确认：新增 %s 张，替换 %s 张", len(added), len(removed))
+                return now_sig
+        else:
+            now = count_thumbnails(page)
+            if now > before:
+                if logger:
+                    logger.info("上传已确认：缩略图 %s -> %s", before, now)
+                return now
         page.wait_for_timeout(400)
+    if before_sig is not None:
+        raise RuntimeError(
+            f"等待上传结果超时（{timeout}ms）：图片 src 集合未变化，上传可能未生效或被静默拒绝"
+        )
     raise RuntimeError(f"等待上传结果超时（{timeout}ms）：缩略图仍为 {count_thumbnails(page)}，未超过 {before}")

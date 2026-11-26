@@ -6,8 +6,39 @@
   "skip_success": true,
   "wait_timeout": 15000,
   "product_dir": "data/products",
+  "default_category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
   "profile_dir": "browser_profile",
   "state_file": "state/tasks_state.json",
   "log_file": "logs/automation.log",
-  "screenshot_dir": "logs/screenshots"
+  "screenshot_dir": "logs/screenshots",
+  "merchant_navigate_menu": true,
+  "merchant_set_name": true,
+  "recovery": {
+    "enabled": false,
+    "max_text_attempts": 2,
+    "allow_vision": true,
+    "max_vision_attempts": 1
+  },
+  "llm": {
+    "api_key_env": "WANXIANG_API_KEY",
+    "base_url": "",
+    "model": "qwen3.8-max",
+    "vision_model": "qwen3.8-max",
+    "timeout": 60
+  },
+  "product_limit": 1,
+  "merchant_skip_existing_images": true
 }

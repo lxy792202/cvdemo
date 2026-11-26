@@ -1,0 +1,39 @@
+{
+  "product_name": "古建牌楼",
+  "long_title": "古建牌楼定制设计施工厂家承接古建工程",
+  "short_title": "古建牌楼定制施工",
+  "tags": [
+    "造型大气",
+    "文化寓意",
+    "精细雕饰",
+    "结构稳固",
+    "灵活定制"
+  ],
+  "description": "飞檐翘角、层次分明，具有鲜明的中式建筑特色。 融合传统建筑文化与地域特色，彰显场所文化底蕴。 可融入浮雕、彩绘、匾额等装饰元素，提升整体观赏性。 注重基础设计与主体结构施工，兼顾安全性和耐久性。 支持不同规格、材质、造型及装饰风格定制。",
+  "category_clicks": [
+    {
+      "text": "其他",
+      "index": 0
+    },
+    {
+      "text": "其他",
+      "index": 2
+    },
+    {
+      "text": "其他",
+      "index": 3
+    }
+  ],
+  "images": {
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/古建牌楼/main_image.jpg",
+    "square": "/Users/a1/Desktop/demo/output/02_main_images/古建牌楼/main_image_1_1.jpg",
+    "detail": "/Users/a1/Desktop/demo/output/02_main_images/古建牌楼/product_collage.jpg"
+  },
+  "_generated_by": "tools/build_data.py",
+  "_文案来源": "marketing_demo/input/company.json",
+  "_图片目录": "/Users/a1/Desktop/demo/output/02_main_images/古建牌楼",
+  "_平台分类": "古建工程",
+  "_待确认": [
+    "category_clicks 用的是全局默认值，平台分类树需逐个核对"
+  ]
+}

@@ -1,8 +1,38 @@
 {
   "company_name": "河北硕景园林古建筑工程有限公司",
-  "address": "河北保定",
-  "intro": "集方案设计、定制生产、现场施工、售后维保于一体的古建园林施工企业。",
-  "phone": "",
-  "contact": "",
-  "images": []
+  "intro": "河北硕景园林古建筑工程有限公司坐落于河北保定，是集方案设计、定制生产、现场施工、售后维保于一体的综合性古建园林施工企业。公司专注传统古建营造与现代园林塑景工程，拥有专业设计团队和经验丰富的施工队伍，业务辐射京津冀及全国各省市，凭借精细工艺、稳定质量与诚信服务，在古建园林行业积累了良好的口碑与众多落地实绩。",
+  "address": "河北省保定市唐县北店头乡东杨庄村",
+  "phone": "15130297856",
+  "contact": "安总",
+  "region": {
+    "current_text": "河北省沧州市",
+    "city": "保定市",
+    "nth": 4
+  },
+  "_说明": [
+    "images 的键必须对应 modules/merchant_uploader.py 里 DEFAULT_SLOTS 的槽位名；槽位选择器可在 config.json 的 merchant_slots 覆盖。",
+    "address / phone / contact 留空则跳过不填，脚本不会猜测业务数据。",
+    "region 需要 {\"current_text\": \"河北省保定市\", \"city\": \"沧州市\", \"nth\": 4} 才会执行地区变更；录制里那次切换看起来是手工测试，默认不做。",
+    "商家名称默认不改写，需要时把 config.json 的 merchant_set_name 设为 true。"
+  ],
+  "_contact_source": "/Users/a1/Desktop/demo/marketing_demo/input/联系我们.txt",
+  "_region_从地址推导": {
+    "province": "河北省",
+    "city": "保定市"
+  },
+  "short_name": "硕景园林",
+  "_文案来源": {
+    "company_name/intro/phone": "/Users/a1/Desktop/demo/marketing_demo/input/company.json",
+    "contact/address": "/Users/a1/Desktop/demo/marketing_demo/input/联系我们.txt"
+  },
+  "_images_说明": {
+    "logo": "PC端 1120x217 横幅 logo（商户信息 LOGO 槽）",
+    "gallery": "平台「1:1图」槽：要求156-256px且<=120K；原始裁切图98x98太小，此为LANCZOS放大到256x256的派生文件",
+    "main": "与录制同源的 4:3 主图；如平台要求公司级图片可换成 PC端/company_intro"
+  },
+  "images": {
+    "logo": "/Users/a1/Desktop/demo/output/04_designs/PC端/logo/河北硕景园林古建筑工程有限公司_logo.png",
+    "gallery": "/Users/a1/Desktop/demo/baidu_auto_plus/data/images/square_logo_256.png",
+    "main": "/Users/a1/Desktop/demo/output/02_main_images/假山/main_image.jpg"
+  }
 }

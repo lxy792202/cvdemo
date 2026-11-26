@@ -8,3 +8,18 @@ config.py
 
 # 流水线产物（仅忽略项目根目录 output）
 /output/
+
+# 虚拟环境/缓存（历史上误提交过，需 git rm --cached 解除跟踪）
+cv/
+__pycache__/
+*.pyc
+
+# 测试scratch与流水线产物
+ceshi/
+marketing_demo/output/
+
+# 浏览器自动化运行时（登录态/日志/状态，含敏感会话）
+baidu_auto_plus/browser_profile/
+baidu_auto_plus/logs/
+baidu_auto_plus/state/
+*.psd
