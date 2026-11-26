@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import re
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -19,6 +20,7 @@ from PIL import Image
 
 from pipeline import common
 from pipeline import design_renderer as renderer
+from pipeline.psd_export import export_design_psds
 from pipeline.stage1_process import load_processed
 from pipeline.stage2_main_images import load_main_images
 
@@ -944,6 +946,61 @@ def _out_dir(entry):
     return common.DESIGN_DIR / entry["region"] / entry["module_id"]
 
 
+def render_pil_entry(entry, env, out_path):
+    """按模块类型渲染 PIL 版式，返回提示词记录。"""
+
+    palette = env["palette"]
+    company_view = env["company_view"]
+    size = (entry["width"], entry["height"])
+    image_paths = [Path(p) for p in entry["images"]]
+    image = image_paths[0] if image_paths else None
+    mode = entry["mode"]
+
+    if mode == "pil_advantage_board":
+        renderer.render_advantage_board(
+            size, out_path, palette, company_view, image_path=image,
+        )
+        return "PIL: 企业核心优势 + 服务流程"
+
+    if mode == "pil_core_advantages":
+        renderer.render_core_advantages_lp(
+            size, out_path, palette, company_view, image_path=image,
+        )
+        return "PIL: 落地页企业核心优势"
+
+    if mode == "pil_process":
+        renderer.render_process_steps(
+            size, out_path, palette, company_view,
+        )
+        return "PIL: 服务流程"
+
+    if mode == "pil_contact":
+        renderer.render_contact(
+            size, out_path, palette, company_view,
+            image_path=image,
+            left_blank=500 if entry["region"] == "PC端" else None,
+        )
+        return "PIL: 联系我们"
+
+    if mode == "pil_product_grid":
+        extra = entry["extra"]
+        renderer.render_product_grid(
+            size, out_path, palette, company_view,
+            cards=extra.get("cards", []),
+            title=extra.get("title", entry["name"]),
+            subtitle=extra.get("subtitle"),
+            columns=extra.get("columns", 2),
+            card_height=extra.get("card_height", 300),
+            show_footer=extra.get("show_footer", True),
+        )
+        return json.dumps(
+            {"mode": "multi_grid", "cards": extra.get("cards")},
+            ensure_ascii=False, indent=2,
+        )
+
+    raise ValueError(f"不是 PIL 模式：{mode}")
+
+
 def generate_entry(entry, env, force=False, design_notes=""):
     company_data = env["company_data"]
     company_view = env["company_view"]
@@ -976,54 +1033,8 @@ def generate_entry(entry, env, force=False, design_notes=""):
         )
         prompt_text = json.dumps(spec, ensure_ascii=False, indent=2)
 
-    elif mode == "pil_advantage_board":
-        renderer.render_advantage_board(
-            (entry["width"], entry["height"]),
-            out_path, palette, company_view,
-            image_path=image_paths[0] if image_paths else None,
-        )
-        prompt_text = "PIL: 企业核心优势 + 服务流程"
-
-    elif mode == "pil_core_advantages":
-        renderer.render_core_advantages_lp(
-            (entry["width"], entry["height"]),
-            out_path, palette, company_view,
-            image_path=image_paths[0] if image_paths else None,
-        )
-        prompt_text = "PIL: 落地页企业核心优势"
-
-    elif mode == "pil_process":
-        renderer.render_process_steps(
-            (entry["width"], entry["height"]),
-            out_path, palette, company_view,
-        )
-        prompt_text = "PIL: 服务流程"
-
-    elif mode == "pil_contact":
-        renderer.render_contact(
-            (entry["width"], entry["height"]),
-            out_path, palette, company_view,
-            image_path=image_paths[0] if image_paths else None,
-            left_blank=500 if entry["region"] == "PC端" else None,
-        )
-        prompt_text = "PIL: 联系我们"
-
-    elif mode == "pil_product_grid":
-        extra = entry["extra"]
-        renderer.render_product_grid(
-            (entry["width"], entry["height"]),
-            out_path, palette, company_view,
-            cards=extra.get("cards", []),
-            title=extra.get("title", entry["name"]),
-            subtitle=extra.get("subtitle"),
-            columns=extra.get("columns", 2),
-            card_height=extra.get("card_height", 300),
-            show_footer=extra.get("show_footer", True),
-        )
-        prompt_text = json.dumps(
-            {"mode": "multi_grid", "cards": entry["extra"].get("cards")},
-            ensure_ascii=False, indent=2,
-        )
+    elif mode.startswith("pil_"):
+        prompt_text = render_pil_entry(entry, env, out_path)
 
     elif mode == "seedream":
         design_prompt, labels = analyze_design(
@@ -1088,6 +1099,7 @@ def run(dry_run=False, force=False, only=None, design_notes=""):
     print("=" * 60)
 
     plan, env = build_plan()
+    full_plan = list(plan)
 
     if only:
         plan = [
@@ -1158,6 +1170,40 @@ def run(dry_run=False, force=False, only=None, design_notes=""):
         "success": sum(1 for r in results if r.get("success")),
         "designs": results,
     }
+    # 除 Logo 外，全部导出为分层 PSD（<50MB）
+    plan_map = {
+        (item["region"], item["module_id"]): item
+        for item in full_plan
+    }
+
+    def background_provider(png_path, module_id):
+        region = png_path.parent.parent.name
+        entry = plan_map.get((region, module_id))
+
+        if not entry or not entry["mode"].startswith("pil_"):
+            return None
+
+        tmp_file = tempfile.NamedTemporaryFile(
+            suffix=".png", prefix="psd_bg_", delete=False
+        )
+        tmp_path = Path(tmp_file.name)
+        tmp_file.close()
+
+        try:
+            with renderer.suppress_text():
+                render_pil_entry(entry, env, tmp_path)
+
+            with Image.open(tmp_path) as img:
+                return img.convert("RGBA").copy()
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    psd_result = export_design_psds(
+        force=force,
+        background_provider=background_provider,
+    )
+    manifest["psd_export"] = psd_result
+
     common.save_manifest("designs", manifest)
 
     # 落地页长图：确认所有模块宽度一致

@@ -1,0 +1,17 @@
+{
+  "product_name": "塑石假山",
+  "long_title": "塑石假山定制设计施工厂家承接园林景观工程",
+  "short_title": "塑石假山定制施工",
+  "tags": ["源头厂家", "免费设计", "专业施工", "定制化方案"],
+  "description": "塑石假山设计、定制、施工，适用于园林景观及各类项目。",
+  "category_clicks": [
+    {"text": "其他", "index": 0},
+    {"text": "其他", "index": 2},
+    {"text": "其他", "index": 3}
+  ],
+  "images": {
+    "main": "images/main.jpg",
+    "square": "images/square.jpg",
+    "detail": "images/detail.jpg"
+  }
+}

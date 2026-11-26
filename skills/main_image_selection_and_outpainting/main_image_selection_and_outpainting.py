@@ -4,7 +4,6 @@ import json
 import math
 import mimetypes
 import re
-import shutil
 import requests
 
 from pathlib import Path
@@ -19,6 +18,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 # 添加到 Python 模块搜索路径
 sys.path.insert(0, str(PROJECT_ROOT))
 from config import BASE_URL, API_KEY, IMAGE_MODEL, VISION_MODEL
+from pipeline.common import save_image_within_limit
 
 
 # =========================================================
@@ -694,19 +694,17 @@ def expand_image(image_path, output_path):
             exist_ok=True
         )
 
-        generated.save(
-            output_path,
-            format="PNG"
-        )
+        # 输出高质量 JPEG，并自动压到 2MB 以下
+        save_image_within_limit(generated, output_path)
 
         # 检查最终尺寸
-        with Image.open(output_path) as check:
+        width, height = get_image_size(output_path)
 
-            if check.width * 3 != check.height * 4:
+        if width * 3 != height * 4:
 
-                raise ValueError(
-                    "扩图结果不符合4:3比例"
-                )
+            raise ValueError(
+                "扩图结果不符合4:3比例"
+            )
 
         print(
             f"\n扩图成功：{output_path}"
@@ -809,7 +807,7 @@ def run(input_dir=None, output_dir=None, image_paths=None):
 
     print("\n【第三步】判断图片比例")
 
-    final_image_path = output_dir / "main_image.png"
+    final_image_path = output_dir / "main_image.jpg"
 
     selection_result = {
         "selected_image": best_image.name,
@@ -826,7 +824,7 @@ def run(input_dir=None, output_dir=None, image_paths=None):
             "原图已经是4:3，无需扩图"
         )
 
-        shutil.copy2(
+        save_image_within_limit(
             best_image,
             final_image_path
         )
@@ -904,7 +902,7 @@ def run(input_dir=None, output_dir=None, image_paths=None):
     )
 
     # 生成 1:1 图片
-    square_path = output_dir / "main_image_1_1.png"
+    square_path = output_dir / "main_image_1_1.jpg"
 
     crop_to_square(
         final_image_path,
@@ -937,7 +935,7 @@ def crop_to_square(image_path, output_path):
         bottom = top + side
 
         square = img.crop((left, top, right, bottom))
-        square.save(output_path, format="PNG")
+        save_image_within_limit(square, output_path)
 
     return output_path
 

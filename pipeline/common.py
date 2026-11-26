@@ -254,6 +254,78 @@ def get_image_size(path):
         return img.size
 
 
+def save_image_within_limit(src, out_path, max_bytes=2_000_000):
+    """
+    保存图片并保证文件大小 <= max_bytes。
+
+    优先保持原分辨率：JPEG 从高质量逐级下调；
+    仍超限时再按比例轻微缩小（保持宽高比）。
+    src 可以是文件路径或 PIL.Image。
+    """
+
+    out_path = abs_path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    img, should_close = _as_image(src)
+
+    try:
+        suffix = out_path.suffix.lower()
+
+        if suffix in (".jpg", ".jpeg"):
+            for quality in range(92, 67, -2):
+                img.save(
+                    out_path, format="JPEG",
+                    quality=quality, optimize=True, progressive=True,
+                )
+                if out_path.stat().st_size <= max_bytes:
+                    return out_path
+
+            width, height = img.size
+            scale = 0.95
+
+            while min(width, height) > 1000:
+                resized = img.resize(
+                    (max(1, int(width * scale)), max(1, int(height * scale))),
+                    Image.Resampling.LANCZOS,
+                )
+                resized.save(
+                    out_path, format="JPEG",
+                    quality=86, optimize=True, progressive=True,
+                )
+                if out_path.stat().st_size <= max_bytes:
+                    return out_path
+                scale -= 0.05
+
+            return out_path
+
+        # PNG 等格式：先优化保存，超限则逐级缩小
+        img.save(out_path, format="PNG", optimize=True)
+
+        width, height = img.size
+        scale = 0.95
+
+        while (
+            out_path.stat().st_size > max_bytes
+            and min(width, height) > 600
+        ):
+            resized = img.resize(
+                (max(1, int(width * scale)), max(1, int(height * scale))),
+                Image.Resampling.LANCZOS,
+            )
+            resized.save(out_path, format="PNG", optimize=True)
+            scale -= 0.05
+
+        return out_path
+
+    finally:
+        if should_close:
+            img.close()
+
+
+def file_size_mb(path):
+    return Path(abs_path(path)).stat().st_size / (1024 * 1024)
+
+
 def save_as_png(src, dest):
     """把任意格式图片统一转存为 PNG（避免 JPEG 字节写进 .png）。"""
     dest = abs_path(dest)

@@ -1,0 +1,14 @@
+{
+  "base_url": "https://www2.baidu.com/",
+  "headless": false,
+  "submit_review": false,
+  "max_retries": 0,
+  "skip_success": true,
+  "wait_timeout": 15000,
+  "product_dir": "products",
+  "profile_dir": "browser_profile",
+  "state_file": "state/tasks_state.json",
+  "log_file": "logs/uploader.log",
+  "screenshot_dir": "logs/screenshots",
+  "manual_product_page": true
+}

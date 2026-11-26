@@ -3,12 +3,29 @@
 所有中文文字在这里精确绘制，避免图片模型写错字。
 """
 
+import contextlib
 import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
 from pipeline import common
+
+
+_TEXT_SUPPRESSED = False
+
+
+@contextlib.contextmanager
+def suppress_text():
+    """渲染“无文字背景层”时临时关闭所有文字绘制。"""
+
+    global _TEXT_SUPPRESSED
+    previous = _TEXT_SUPPRESSED
+    _TEXT_SUPPRESSED = True
+    try:
+        yield
+    finally:
+        _TEXT_SUPPRESSED = previous
 
 
 FONT_CANDIDATES = {
@@ -93,6 +110,8 @@ def palette_from_brand(brand=None):
 # ============================================================
 
 def _text(draw, xy, text, size, fill, bold=False, anchor="la"):
+    if _TEXT_SUPPRESSED:
+        return
     draw.text(
         xy,
         str(text),
@@ -138,6 +157,8 @@ def _wrap(draw, text, font, max_width, max_lines=None):
 
 def _draw_paragraph(draw, xy, text, size, fill, max_width, line_gap=8,
                     bold=False, max_lines=None):
+    if _TEXT_SUPPRESSED:
+        return xy[1]
     font = get_font(size, bold)
     lines = _wrap(draw, text, font, max_width, max_lines=max_lines)
     x, y = xy
@@ -288,6 +309,9 @@ def draw_ruyi_cloud(draw, cx, cy, scale, color, width=2):
 
 def _vertical_text(draw, x, y, text, size, fill, gap=6, bold=False):
     """竖排文字，用于增加东方海报气质。"""
+
+    if _TEXT_SUPPRESSED:
+        return
 
     font = get_font(size, bold)
     for char in str(text):
@@ -956,6 +980,21 @@ def render_contact(size, out_path, palette, company, image_path=None,
                    left_blank=None):
 
     width, height = size
+
+    # PC 端联系我们：只输出无文字的背景框，供后续在 CMS 里叠加内容
+    if width > 900 and height <= 520:
+        canvas = _vertical_gradient(
+            (width, height), palette["primary_dark"], palette["primary_deep"]
+        )
+        decorate_red_panel(canvas, (0, 0, width, height), palette)
+        draw = ImageDraw.Draw(canvas)
+        gold_frame(draw, (0, 0, width, height), palette, inset=18)
+        draw.line(
+            (40, 28, 40, height - 28),
+            fill=palette["gold"], width=3,
+        )
+        canvas.save(out_path, format="PNG")
+        return out_path
 
     # 照片保持原色，不加红色遮罩
     if image_path and Path(image_path).exists():
